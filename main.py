@@ -10,6 +10,7 @@ X_gd, _ = gradient_descent(J, np.array([[0], [0]]), 1e-3, 1000)
 plot_contour(J, (-10, 10), (-10, 10))
 
 plt.plot(X_gd[:, 0], X_gd[:, 1], 'r*--', label='Gradient Descente')
+plt.savefig('figure/gradient_descent.svg')
 plt.show()
 
 
@@ -27,4 +28,5 @@ for i, y_val in enumerate(y):
     plt.cla()
     plt.title(f'Coupe de la fonction ({i+1}/{len(y)})')
     plt.plot(x, y_val)
+    plt.savefig(f'figure/Coupe de la fonction ({i+1}).svg')
     plt.show()
