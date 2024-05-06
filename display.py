@@ -49,7 +49,7 @@ def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, method
         plt.cla()
         plt.title(f'Coupe de la fonction ({i+1}/{len(y)})')
         plt.plot(x, y_val)
-        plt.savefig(f'{path}/partial_funct({i+1}).svg')
+        plt.savefig(f'{path}\\partial_funct({i+1}).svg')
 
 
 def display_norm(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
@@ -61,4 +61,4 @@ def display_norm(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHO
     plt.cla()
     plt.title('Convergence de la solution')
     plt.plot(np.arange(len(grad)), [np.linalg.norm(grad_val) for grad_val in grad])
-    plt.savefig(f'{path}/convergence.svg')
+    plt.savefig(f'{path}\\convergence.svg')
