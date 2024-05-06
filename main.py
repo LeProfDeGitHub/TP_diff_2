@@ -5,7 +5,9 @@ from display import (display_convergence_2d,
                      display_partial_func,
                      display_norm)
 from methods import (gradient_descent_fix_step,
-                     gradient_descent_optimal_step)
+                     gradient_descent_optimal_step,
+                     quadratic_gradient_descent,
+                     quadratic_conjuguate_gradient_method)
 from tools import add_floders
 
 
