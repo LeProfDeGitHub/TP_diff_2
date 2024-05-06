@@ -2,10 +2,10 @@ from matplotlib import pyplot as plt
 import numpy as np
 from function import get_zvankin_quad
 from display import plot_contour
-from methods import gradient_descent
+from methods import gradient_descent_optimal_step
 
 J = get_zvankin_quad(2)
-X_gd, _ = gradient_descent(J, np.array([[0], [0]]), 1e-3, 1000)
+X_gd, _ = gradient_descent_optimal_step(J, np.array([[0], [0]]), 1e-3, 1000)
 
 plot_contour(J, (-10, 10), (-10, 10))
 
