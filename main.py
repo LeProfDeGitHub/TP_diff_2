@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from function import get_zvankin_quad , tri_diagonal
+from function import get_other_diago, get_zvankin_quad
 from display import (display_convergence_2d,
                      display_partial_func,
                      display_norm)
@@ -17,27 +17,27 @@ def main():
 
     display_convergence_2d('figure\\grad_desc_fix_step',
                             get_zvankin_quad(2),
-                            np.array([[0], [0]]),
+                            np.array([[-5], [-5]]),
                             gradient_descent_fix_step)
 
     display_convergence_2d('figure\\grad_desc_optimal_step',
                             get_zvankin_quad(2),
-                            np.array([[0], [0]]),
+                            np.array([[-5], [-5]]),
                             gradient_descent_optimal_step)
 
     display_partial_func('figure\\grad_desc_fix_step\\partial_func',
                           get_zvankin_quad(2),
-                          np.array([[0], [0]]),
+                          np.array([[-5], [-5]]),
                           gradient_descent_fix_step)
     
     display_partial_func('figure\\grad_desc_optimal_step\\partial_func',
                          get_zvankin_quad(2),
-                         np.array([[0], [0]]),
+                         np.array([[-5], [-5]]),
                          gradient_descent_optimal_step)
 
     # gradient descent method
 
-    J2 = tri_diagonal(1000)
+    J2 = get_other_diago(1000)
     #optimal step gradient descent
     X_gd, i_max = quadratic_gradient_descent(J2, np.zeros((1000, 1)), 1e-10, 2*10**3)
 
