@@ -74,3 +74,16 @@ def get_other_diago(n) :
     c = 0
     return QuadraticFunction(A, b, c)
 
+def condi_A( f : QuadraticFunction) :
+    """
+    :param f: QuadraticFunction
+    :return: QuadraticFunction with A conditionned
+    """
+    D = np.zeros((f.A.shape[0], f.A.shape[1]))
+    for i in range(f.A.shape[0]):
+        D[i, i] = 1/(i+1)
+    A = D @ f.A @ D
+    b = D @ f.b
+    c = f.c
+    return QuadraticFunction(A, b, c)
+
