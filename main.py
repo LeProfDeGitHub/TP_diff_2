@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from function import get_zvankin_quad
+from function import get_zvankin_quad , tri_diagonal
 from display import plot_contour
 from methods import gradient_descent_optimal_step
 

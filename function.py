@@ -46,3 +46,21 @@ def get_zvankin_quad(n):
     return QuadraticFunction(A, b, c)
 
 
+
+
+
+def tri_diagonal(n) :
+    """
+    create a tri-diagonal matrix of size n
+    with 3*i**2 on the diagonal and -1 on the sub-diagonal and super-diagonal
+    :param n: size of the matrix
+    :return:  QuadraticFunction object
+    """
+    A = np.eye(n)
+    for i in range(n):
+        A[i, i] = 3*(i+1)**2
+    A = A - np.eye(n, k=1) - np.eye(n, k=-1)
+    b = np.array([[i+1] for i in range(n)])
+    c = 0
+    return QuadraticFunction(A, b, c)
+
