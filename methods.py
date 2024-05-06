@@ -96,17 +96,33 @@ def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
     :param niter: number of iterations
     :return: none
     """
+    print("------------------------------------------")
+    print("           unconditioned matrix           ")
+    print("------------------------------------------\n")
     X_gd, i_max = quadratic_gradient_descent(f, X0, eps, niter)
     print(f'gradient descent method optimal step: {i_max} iterations')
+    error = np.linalg.norm(f.df (X_gd[-1]))
+    print(f'error: {error}\n')
+
     X_cg, i_max = quadratic_conjuguate_gradient_method(f, X0, eps, niter)
     print(f'conjuguate gradient method: {i_max} iterations')
+    error = np.linalg.norm(f.df (X_cg[-1]))
+    print(f'error: {error }\n')
+
     print("------------------------------------------")
     print("             conditioned matrix           ")
-    print("------------------------------------------")
+    print("------------------------------------------\n")
+
     quad = condi_A(f)
     X_gd, i_max = quadratic_gradient_descent(quad, X0, eps, niter)
     print(f'gradient descent method optimal step: {i_max} iterations')
+    error = np.linalg.norm(quad.df (X_gd[-1]))
+    print(f'error: {error }\n')
+
     X_cg, i_max = quadratic_conjuguate_gradient_method(quad, X0, eps, niter)
     print(f'conjuguate gradient method: {i_max} iterations')
+    error = np.linalg.norm(quad.df (X_cg[-1]))
+    print(f'error: {error}\n')
+
     return None
 
