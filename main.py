@@ -35,6 +35,7 @@ def main():
                          get_zvankin_quad(2),
                          np.array([[-5], [-5]]),
                          gradient_descent_optimal_step)
+    # compare a conditioned matrix and an unconditioned matrix for a quadratic function
     comparaison_condi(get_other_diago(1000), np.array([[0] for i in range(1000)]), 1e-10, 2*10**3)
 
 

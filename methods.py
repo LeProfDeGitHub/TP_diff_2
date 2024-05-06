@@ -6,6 +6,14 @@ from function import QuadraticFunction, Function, condi_A
 METHODE_TYPE = Callable[[QuadraticFunction, np.ndarray, float, int], tuple[np.ndarray, int]]
 
 def quadratic_gradient_descent(f: QuadraticFunction, X0, eps: float, niter: int):
+    """
+    find the minimum of a quadratic function using the gradient descent method
+    :param f: quadratic function object
+    :param X0: starting point
+    :param eps: error
+    :param niter: number of iterations
+    :return: X : array of points, i+1 : number of iterations
+    """
     i = 0
     X = np.array([X0])
     for i in range(niter):
@@ -19,6 +27,14 @@ def quadratic_gradient_descent(f: QuadraticFunction, X0, eps: float, niter: int)
     return X, i+1
 
 def quadratic_conjuguate_gradient_method(f: QuadraticFunction, X0, eps: float, niter: int):
+    """
+    find the minimum of a quadratic function using the conjuguate gradient method
+    :param f: quadratic function object
+    :param X0: starting point
+    :param eps: error
+    :param niter: number of iterations
+    :return: X : array of points, i+1 : number of iterations
+    """
     i = 0
     X = np.array([X0])
     r0 = p = f.b - f.A @ X0
@@ -35,6 +51,14 @@ def quadratic_conjuguate_gradient_method(f: QuadraticFunction, X0, eps: float, n
 
 
 def newton(f: Function, X0, eps: float, niter: int):
+    """
+    find the minimum of a function using the newton method
+    :param f: function object
+    :param X0: starting point
+    :param eps: error
+    :param niter: number of iterations
+    :return: X : array of points, i+1 : number of iterations
+    """
     i = 0
     X = np.array([X0])
     for i in range(niter):
@@ -47,6 +71,15 @@ def newton(f: Function, X0, eps: float, niter: int):
     return X, i+1
 
 def gradient_descent_fix_step(f: Function, X0, eps: float, niter: int, alpha: float = 1e-3):
+    """
+    use the gradient descent method with a fixed step to find the minimum of a function
+    :param f: function object
+    :param X0: starting point
+    :param eps: error
+    :param niter: number of iterations
+    :param alpha: step used in the gradient descent method
+    :return: X : array of points, i+1 : number of iterations
+    """
     i = 0
     X = np.array([X0])
     for i in range(niter):
@@ -57,6 +90,14 @@ def gradient_descent_fix_step(f: Function, X0, eps: float, niter: int, alpha: fl
     return X, i+1
 
 def gradient_descent_optimal_step(f: Function, X0, eps: float, niter: int):
+    """
+    use the gradient descent method with an optimal step to find the minimum of a function
+    :param f: fonction object
+    :param X0: starting point
+    :param eps: error
+    :param niter: number of iterations
+    :return: X : array of points, i+1 : number of iterations
+    """
     i = 0
     X = np.array([X0])
     for i in range(niter):
@@ -70,6 +111,14 @@ def gradient_descent_optimal_step(f: Function, X0, eps: float, niter: int):
     return X, i+1
 
 def newton_optimal_step(f: Function, X0, eps: float, niter: int):
+    """
+    find the minimum of a function using the newton method with an optimal step
+    :param f: function object
+    :param X0: starting point
+    :param eps: error
+    :param niter: number of iterations
+    :return: X : array of points, i+1 : number of iterations
+    """
     i = 0
     X = np.array([X0])
     for i in range(niter):
@@ -90,7 +139,7 @@ def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
     compare the number of iterations of the gradient descent method
     and the conjugate gradient method for a given quadratic function.
 
-    :param f: QuadraticFunction
+    :param f: QuadraticFunction object
     :param X0: starting point
     :param eps: error
     :param niter: number of iterations
@@ -125,4 +174,5 @@ def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
     print(f'error: {error}\n')
 
     return None
+
 

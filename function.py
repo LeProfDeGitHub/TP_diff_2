@@ -53,6 +53,12 @@ def tri_diagonal(n, a, b, c) :
 
 
 def get_zvankin_quad(n):
+    """
+    create a tri-diagonal matrix of size n
+    with 2 on the diagonal and -1 on the sub-diagonal and super-diagonal
+    :param n: size of the matrix
+    :return: quadratic function object
+    """
     A = tri_diagonal(n, 2, -1, -1)
     b = np.array([[i+1] for i in range(n)])
     c = 0
@@ -76,8 +82,9 @@ def get_other_diago(n: int):
 
 def condi_A( f : QuadraticFunction) :
     """
+    condition A with the diagonal matrix D = diag(1/(i+1))
     :param f: QuadraticFunction
-    :return: QuadraticFunction with A conditionned
+    :return: QuadraticFunction with A conditioned
     """
     D = np.zeros((f.A.shape[0], f.A.shape[1]))
     for i in range(f.A.shape[0]):
