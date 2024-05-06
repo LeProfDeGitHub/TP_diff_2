@@ -10,7 +10,7 @@ X_gd, _ = gradient_descent(J, np.array([[0], [0]]), 1e-3, 1000)
 plot_contour(J, (-10, 10), (-10, 10))
 
 plt.plot(X_gd[:, 0], X_gd[:, 1], 'r*--', label='Gradient Descente')
-plt.savefig('figure/gradient_descent.svg')
+plt.savefig('figure/gradient_descent.svg') #enregistre la figure
 plt.show()
 
 
