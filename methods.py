@@ -46,7 +46,17 @@ def newton(f: Function, X0, eps: float, niter: int):
         X = np.append(X, np.array([X[-1] + p]), axis=0)
     return X, i
 
-def gradient_descent(f: Function, X0, eps: float, niter: int):
+def gradient_descent_fix_step(f: Function, X0, eps: float, niter: int, alpha: float = 1e-3):
+    i = 0
+    X = np.array([X0])
+    for i in range(niter):
+        p = - f.df(X[-1])
+        if np.linalg.norm(p) < eps:
+            break
+        X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
+    return X, i
+
+def gradient_descent_optimal_step(f: Function, X0, eps: float, niter: int):
     i = 0
     X = np.array([X0])
     for i in range(niter):
