@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import numpy as np
 from function import get_zvankin_quad
 from display import (display_convergence_2d,

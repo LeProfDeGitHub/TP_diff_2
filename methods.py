@@ -16,7 +16,7 @@ def quadratic_gradient_descent(f: QuadraticFunction, X0, eps: float, niter: int)
         old_x = X[-1]
         new_x = old_x + alpha * p
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
-    return X, i
+    return X, i+1
 
 def quadratic_conjuguate_gradient_method(f: QuadraticFunction, X0, eps: float, niter: int):
     i = 0
@@ -31,7 +31,7 @@ def quadratic_conjuguate_gradient_method(f: QuadraticFunction, X0, eps: float, n
         beta = (r1.T @ r1)/(r0.T @ r0)
         p = r1 + beta * p
         r0 = r1
-    return X, i
+    return X, i+1
 
 
 def newton(f: Function, X0, eps: float, niter: int):
@@ -44,7 +44,7 @@ def newton(f: Function, X0, eps: float, niter: int):
         if np.linalg.norm(p) < eps:
             break
         X = np.append(X, np.array([X[-1] + p]), axis=0)
-    return X, i
+    return X, i+1
 
 def gradient_descent_fix_step(f: Function, X0, eps: float, niter: int, alpha: float = 1e-3):
     i = 0
