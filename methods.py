@@ -1,9 +1,9 @@
-from typing import Callable
+from typing import Callable, NewType
 import numpy as np
 
 from function import QuadraticFunction, Function
 
-
+METHODE_TYPE = Callable[[QuadraticFunction, np.ndarray, float, int], tuple[np.ndarray, int]]
 
 def quadratic_gradient_descent(f: QuadraticFunction, X0, eps: float, niter: int):
     i = 0

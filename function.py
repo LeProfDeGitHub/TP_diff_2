@@ -44,3 +44,5 @@ def get_zvankin_quad(n):
     b = np.array([[i+1] for i in range(n)])
     c = 0
     return QuadraticFunction(A, b, c)
+
+
