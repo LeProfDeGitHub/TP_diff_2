@@ -41,7 +41,7 @@ def tri_diagonal(n, a, b, c) :
     create a tri-diagonal matrix of size n
     with 3*i**2 on the diagonal and -1 on the sub-diagonal and super-diagonal
     :param n: size of the matrix
-    :return:  QuadraticFunction object
+    :return:  Matrix A of size n
     """
     A = a * np.eye(n)
     for i in range(n):
@@ -59,7 +59,7 @@ def get_zvankin_quad(n):
     return QuadraticFunction(A, b, c)
 
 
-def get_other_diago(n) :
+def get_other_diago(n: int):
     """
     create a tri-diagonal matrix of size n
     with 3*i**2 on the diagonal and -1 on the sub-diagonal and super-diagonal
@@ -86,4 +86,5 @@ def condi_A( f : QuadraticFunction) :
     b = D @ f.b
     c = f.c
     return QuadraticFunction(A, b, c)
+
 

@@ -1,7 +1,7 @@
 from typing import Callable, NewType
 import numpy as np
 
-from function import QuadraticFunction, Function
+from function import QuadraticFunction, Function, condi_A
 
 METHODE_TYPE = Callable[[QuadraticFunction, np.ndarray, float, int], tuple[np.ndarray, int]]
 
@@ -54,7 +54,7 @@ def gradient_descent_fix_step(f: Function, X0, eps: float, niter: int, alpha: fl
         if np.linalg.norm(p) < eps:
             break
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
-    return X, i
+    return X, i+1
 
 def gradient_descent_optimal_step(f: Function, X0, eps: float, niter: int):
     i = 0
@@ -67,7 +67,7 @@ def gradient_descent_optimal_step(f: Function, X0, eps: float, niter: int):
         alpha, _ = newton(f_alpha, np.array([[0]]), eps, niter)
         alpha = alpha[-1]
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
-    return X, i
+    return X, i+1
 
 def newton_optimal_step(f: Function, X0, eps: float, niter: int):
     i = 0
@@ -82,4 +82,31 @@ def newton_optimal_step(f: Function, X0, eps: float, niter: int):
         alpha, _ = newton(f_alpha, np.array([[0]]), eps, niter)
         alpha = alpha[-1]
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
-    return X, i
+    return X, i+1
+
+
+def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
+    """
+    compare the number of iterations of the gradient descent method
+    and the conjugate gradient method for a given quadratic function.
+
+    :param f: QuadraticFunction
+    :param X0: starting point
+    :param eps: error
+    :param niter: number of iterations
+    :return: none
+    """
+    X_gd, i_max = quadratic_gradient_descent(f, X0, eps, niter)
+    print(f'gradient descent method optimal step: {i_max} iterations')
+    X_cg, i_max = quadratic_conjuguate_gradient_method(f, X0, eps, niter)
+    print(f'conjuguate gradient method: {i_max} iterations')
+    print("------------------------------------------")
+    print("             conditioned matrix           ")
+    print("------------------------------------------")
+    quad = condi_A(f)
+    X_gd, i_max = quadratic_gradient_descent(quad, X0, eps, niter)
+    print(f'gradient descent method optimal step: {i_max} iterations')
+    X_cg, i_max = quadratic_conjuguate_gradient_method(quad, X0, eps, niter)
+    print(f'conjuguate gradient method: {i_max} iterations')
+    return None
+
