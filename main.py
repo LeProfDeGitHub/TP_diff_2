@@ -6,10 +6,13 @@ from display import (display_convergence_2d,
                      display_norm)
 from methods import (gradient_descent_fix_step,
                      gradient_descent_optimal_step)
+from tools import add_floders
 
 
 
 def main():
+    add_floders()
+
     display_convergence_2d('figure\\grad_desc_fix_step',
                             get_zvankin_quad(2),
                             np.array([[0], [0]]),
