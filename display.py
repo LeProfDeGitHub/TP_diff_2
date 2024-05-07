@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-from function import Function, QuadraticFunction
+from function import Function, QuadraticFunction, get_other_diago, condi_A
 from matplotlib import pyplot as plt
 from matplotlib import colors as plt_color
 
@@ -85,3 +85,24 @@ def display_compare_error(path: str, J: QuadraticFunction, X0: np.ndarray,
         plt.title('Erreur de la solution')
         plt.loglog(np.arange(imax), err, label=label)
     plt.savefig(f'{path}\\error.png')
+
+
+def display_ka( nmax :int ) :
+    """
+    display the condition number of the matrix A
+    :param f: QuadraticFunction
+    :param nmax: max size of the matrix
+    """
+    ka = []
+    for i in range(1, nmax):
+        A = get_other_diago(i)
+        f = condi_A(A)
+        ka.append(np.linalg.cond(f.A))
+
+    plt.clf()
+    plt.title('Condition number of the matrix A')
+    plt.plot(range(1, nmax), ka)
+    plt.savefig('figure\\condition_number.png')
+
+#test
+display_ka(10)

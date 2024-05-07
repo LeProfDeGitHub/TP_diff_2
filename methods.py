@@ -1,6 +1,5 @@
 from typing import Callable, NewType
 import numpy as np
-import scipy.minimize as minimize
 from function import QuadraticFunction, Function, condi_A
 
 METHODE_TYPE = Callable[[QuadraticFunction, np.ndarray, float, int], tuple[np.ndarray, int]]
