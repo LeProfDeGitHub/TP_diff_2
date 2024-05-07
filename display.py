@@ -27,38 +27,61 @@ def plot_contour(f: Function, xlim: tuple[float, float], ylim: tuple[float, floa
 
 
 def display_convergence_2d(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
-    X_gd, _ = methode(J, X0, 1e-3, 1000)
+    Xn, _ = methode(J, X0, 1e-3, 1000)
     
     plot_contour(J, (-10, 10), (-10, 10))
-    plt.plot(X_gd[:, 0], X_gd[:, 1], 'r*--', label='Gradient Descente')
+    plt.plot(Xn[:, 0], Xn[:, 1], 'r*--', label='Gradient Descente')
     plt.savefig(f'{path}\\convergence_grad_de.png')
 
 
 
 def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
-    X_gd, _ = methode(J, X0, 1e-3, 1000)
+    Xn, imax = methode(J, X0, 1e-3, 1000)
     
     x         = np.linspace(-10, 10, 1000)
-    grad      = [J.df(X) for X in X_gd]
+    grad      = [J.df(X) for X in Xn]
     grad_norm = [grad_val / np.linalg.norm(grad_val) for grad_val in grad]
 
     y = np.array([[J.partial(X, d)(x_val)[0, 0] for x_val in x]
-                for X, d in zip(X_gd, grad_norm)])
+                for X, d in zip(Xn, grad_norm)])
 
-    for i in np.linspace(0, len(y), 10, dtype=int, endpoint=False):
+    for i in np.linspace(0, imax, 10, dtype=int, endpoint=False):
         plt.clf()
-        plt.title(f'Coupe de la fonction ({i+1}/{len(y)})')
+        plt.title(f'Coupe de la fonction ({i+1}/{imax + 1})')
         plt.plot(x, y[i])
         plt.savefig(f'{path}\\partial_funct({i+1}).png')
 
 
 def display_norm(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
 
-    X_gd, _ = methode(J, X0, 1e-3, 1000)
+    Xn, imax = methode(J, X0, 1e-3, 1000)
     
-    grad = [J.df(X) for X in X_gd]
+    grad = [J.df(X) for X in Xn]
 
     plt.clf()
     plt.title('Convergence de la solution')
-    plt.plot(np.arange(len(grad)), [np.linalg.norm(grad_val) for grad_val in grad])
+    plt.plot(np.arange(imax + 1), [np.linalg.norm(grad_val) for grad_val in grad])
     plt.savefig(f'{path}\\convergence.png')
+
+def display_error(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
+
+    Xn, imax = methode(J, X0, 1e-5, 20_000)
+    
+    err = np.array([np.linalg.norm(J.A @ x - J.b) for x in Xn])
+
+    plt.clf()
+    plt.title('Erreur de la solution')
+    plt.semilogy(np.arange(imax), err)
+    plt.savefig(f'{path}\\error.png')
+
+def display_compare_error(path: str, J: QuadraticFunction, X0: np.ndarray,
+                          methodes_labels: list[tuple[METHODE_TYPE, str]]):
+    plt.clf()
+    for methode, label in methodes_labels:
+        Xn, imax = methode(J, X0, 1e-5, 20_000)
+    
+        err = np.array([np.linalg.norm(J.A @ x - J.b) for x in Xn])
+
+        plt.title('Erreur de la solution')
+        plt.loglog(np.arange(imax), err, label=label)
+    plt.savefig(f'{path}\\error.png')

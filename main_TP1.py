@@ -3,7 +3,9 @@ import numpy as np
 from function import get_other_diago, get_zvankin_quad, condi_A
 from display import (display_convergence_2d,
                      display_partial_func,
-                     display_norm)
+                     display_norm,
+                     display_error,
+                     display_compare_error)
 from methods import (gradient_descent_fix_step,
                      gradient_descent_optimal_step,
                      quadratic_gradient_descent,
@@ -37,6 +39,22 @@ def main():
                          gradient_descent_optimal_step)
     # compare a conditioned matrix and an unconditioned matrix for a quadratic function
     comparaison_condi(get_other_diago(1000), np.array([[0] for i in range(1000)]), 1e-10, 2*10**3)
+
+    display_error('figure\\grad_desc_fix_step',
+                  get_zvankin_quad(2),
+                  np.array([[-5], [-5]]),
+                  gradient_descent_fix_step)
+
+    display_error('figure\\grad_desc_optimal_step',
+                  get_zvankin_quad(2),
+                  np.array([[-5], [-5]]),
+                  gradient_descent_optimal_step)
+
+    display_compare_error('figure\\',
+                          get_zvankin_quad(2),
+                          np.array([[-5], [-5]]),
+                          [(gradient_descent_fix_step, 'Gradient Descent Fix Step'),
+                           (gradient_descent_optimal_step, 'Gradient Descent Optimal Step')])
 
 
 
