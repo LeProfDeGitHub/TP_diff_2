@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-import numpy as np
+import autograd.numpy as np
 
 from function import Function, QuadraticFunction, get_other_diago, condi_A
 from matplotlib import pyplot as plt
@@ -14,8 +14,7 @@ def plot_contour(f: Function, xlim: tuple[float, float], ylim: tuple[float, floa
         np.linspace(xlim[0], xlim[1], 100),
         np.linspace(ylim[0], ylim[1], 100)
     )
-
-    z = np.array([f(np.array([[x[i, j]], [y[i, j]]]))[0] for i in range(100) for j in range(100)]).reshape(100, 100)
+    z = np.array([f(np.array([[x[i, j]], [y[i, j]]])) for i in range(100) for j in range(100)]).reshape(100, 100)
 
     k = np.linspace(np.nanmin(z), np.nanmax(z), 100)
 

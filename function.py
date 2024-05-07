@@ -1,5 +1,5 @@
-import numpy as np
 import autograd
+import autograd.numpy as np
 
 
 class Function:
@@ -98,26 +98,14 @@ def condi_A( f : QuadraticFunction) :
 
 
 def get_J_1(A: np.ndarray, b: np.ndarray):
-    """
-    create a tri-diagonal matrix of size n
-    with 1 on the diagonal and -1 on the sub-diagonal and super-diagonal
-    :param n: size of the matrix
-    :return: QuadraticFunction object
-    """
     def func(X):
         return np.sum([np.exp(A[:, i].T @ X + b[i]) for i in range(A.shape[1])])
 
     return Function(func, autograd.grad(func), autograd.hessian(func))
 
-def get_J_2(A: np.ndarray, b: np.ndarray):
-    """
-    create a tri-diagonal matrix of size n
-    with 1 on the diagonal and -1 on the sub-diagonal and super-diagonal
-    :param n: size of the matrix
-    :return: QuadraticFunction object
-    """
+def get_J_2(n: int):
     def func(X):
-        return np.sum([np.log(np.exp(A[:, i].T @ X + b[i])) for i in range(A.shape[1])])
+        return np.sum([np.log(np.exp(X[i])) for i in range(n)])
 
     return Function(func, autograd.grad(func), autograd.hessian(func))
 
