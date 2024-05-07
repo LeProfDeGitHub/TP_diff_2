@@ -1,4 +1,5 @@
 import numpy as np
+import autograd
 
 
 class Function:
@@ -80,6 +81,7 @@ def get_other_diago(n: int):
     c = 0
     return QuadraticFunction(A, b, c)
 
+
 def condi_A( f : QuadraticFunction) :
     """
     condition A with the diagonal matrix D = diag(1/(i+1))
@@ -94,4 +96,28 @@ def condi_A( f : QuadraticFunction) :
     c = f.c
     return QuadraticFunction(A, b, c)
 
+
+def get_J_1(A: np.ndarray, b: np.ndarray):
+    """
+    create a tri-diagonal matrix of size n
+    with 1 on the diagonal and -1 on the sub-diagonal and super-diagonal
+    :param n: size of the matrix
+    :return: QuadraticFunction object
+    """
+    def func(X):
+        return np.sum([np.exp(A[:, i].T @ X + b[i]) for i in range(A.shape[1])])
+
+    return Function(func, autograd.grad(func), autograd.hessian(func))
+
+def get_J_2(A: np.ndarray, b: np.ndarray):
+    """
+    create a tri-diagonal matrix of size n
+    with 1 on the diagonal and -1 on the sub-diagonal and super-diagonal
+    :param n: size of the matrix
+    :return: QuadraticFunction object
+    """
+    def func(X):
+        return np.sum([np.log(np.exp(A[:, i].T @ X + b[i])) for i in range(A.shape[1])])
+
+    return Function(func, autograd.grad(func), autograd.hessian(func))
 
