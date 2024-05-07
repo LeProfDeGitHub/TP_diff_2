@@ -179,6 +179,11 @@ def BFGS(J : Function , x0 , eps : float, n :int) :
     """
     find the minimum of a function using the
     Broyden Fletcher Goldfarb Shanno method
+    :param J: function object
+    :param x0: starting point
+    :param eps: error
+    :param n: number of iterations
+    :return: X : array of points, i+1 : number of iterations
     """
     X = np.array([x0])
     B = np.eye(len(x0))
