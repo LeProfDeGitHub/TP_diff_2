@@ -1,6 +1,6 @@
 from typing import Callable, NewType
 import numpy as np
-
+import scipy.minimize as minimize
 from function import QuadraticFunction, Function, condi_A
 
 METHODE_TYPE = Callable[[QuadraticFunction, np.ndarray, float, int], tuple[np.ndarray, int]]
@@ -175,4 +175,20 @@ def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
 
     return None
 
-
+def BFGS(J : Function , x0 , eps : float, n :int) :
+    """
+    find the minimum of a function using the
+    Broyden Fletcher Goldfarb Shanno method
+    """
+    X = np.array([x0])
+    B = np.eye(len(x0))
+    while np.linalg.norm(J.df(X[-1])) > eps and len(X) < n :
+        d = - B @ J.df(X[-1])
+        alpha = BFGS(J.partial(X[0], d), np.array([[0]]), eps, n)[0]
+        alpha = alpha[-1]
+        x = X[-1] + alpha * d
+        s = x - X[-1]
+        y = J.df(x) - J.df(X[-1])
+        B = B + (y @ y.T)/(y.T @ s) - (B @ s @ s.T @ B)/(s.T @ B @ s)
+        X = np.append(X, np.array([x]), axis=0)
+    return X, len(X)
