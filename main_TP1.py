@@ -5,7 +5,8 @@ from display import (display_convergence_2d,
                      display_partial_func,
                      display_norm,
                      display_error,
-                     display_compare_error)
+                     display_compare_error,
+                     display_ka)
 from methods import (gradient_descent_fix_step,
                      gradient_descent_optimal_step,
                      quadratic_gradient_descent,
@@ -56,7 +57,7 @@ def main():
                           [(gradient_descent_fix_step, 'Gradient Descent Fix Step'),
                            (gradient_descent_optimal_step, 'Gradient Descent Optimal Step')])
 
-
+    display_ka('figure\\condition_number.png', 500)
 
 if __name__ == '__main__':
     main()

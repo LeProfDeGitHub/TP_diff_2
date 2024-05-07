@@ -86,7 +86,7 @@ def display_compare_error(path: str, J: QuadraticFunction, X0: np.ndarray,
     plt.savefig(f'{path}\\error.png')
 
 
-def display_ka( nmax :int ) :
+def display_ka(path : str,  nmax :int ) :
     """
     display the condition number of the matrix A
     :param f: QuadraticFunction
@@ -101,7 +101,5 @@ def display_ka( nmax :int ) :
     plt.clf()
     plt.title('Condition number of the matrix A')
     plt.plot(range(1, nmax), ka)
-    plt.savefig('figure\\condition_number.png')
-
-#test
-display_ka(10)
+    plt.grid()
+    plt.savefig(path)

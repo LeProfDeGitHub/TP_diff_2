@@ -188,7 +188,7 @@ def BFGS(J : Function , x0 , eps : float, n :int) :
     B = np.eye(len(x0))
     while np.linalg.norm(J.df(X[-1])) > eps and len(X) < n :
         d = - B @ J.df(X[-1])
-        alpha = BFGS(J.partial(X[0], d), np.array([[0]]), eps, n)[0]
+        alpha = BFGS(J.partial(X[-1], d), np.array([[0]]), eps, n)[0]
         alpha = alpha[-1]
         x = X[-1] + alpha * d
         s = x - X[-1]
