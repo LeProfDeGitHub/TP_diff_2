@@ -3,7 +3,8 @@ import autograd.numpy as np
 
 from function import Function, QuadraticFunction, get_other_diago, condi_A
 from matplotlib import pyplot as plt
-from matplotlib import colors as plt_color
+from matplotlib import contour as ctr
+# from matplotlib import colors as plt_color
 
 from methods import METHODE_TYPE
 
@@ -37,17 +38,33 @@ def display_convergence_2d(path: str, J: QuadraticFunction, X0: np.ndarray, meth
 def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
     Xn, imax = methode(J, X0, 1e-3, 1000)
     
-    x         = np.linspace(-10, 10, 1000)
+    
+    i_lnspace = np.linspace(0, imax, 10, dtype=int, endpoint=False)
+    Xn        = Xn[i_lnspace]
     grad      = [J.df(X) for X in Xn]
     grad_norm = [grad_val / np.linalg.norm(grad_val) for grad_val in grad]
 
-    y = np.array([[J.partial(X, d)(x_val)[0, 0] for x_val in x]
-                for X, d in zip(Xn, grad_norm)])
+    xn  = np.linspace(-10, 10, 1000)
+    yns = np.array([[J.partial(X, d)(x)[0, 0] for x in xn]
+                    for X, d in zip(Xn, grad_norm)])
 
-    for i in np.linspace(0, imax, 10, dtype=int, endpoint=False):
+    segs = [[[[x, y] for x, y in zip(xn, yn)]] for yn in yns]
+
+    cmap = plt.get_cmap('Blues')
+    
+    plt.clf()
+    plt.title(f'Coupes de la fonction')
+    cs = ctr.ContourSet(plt.gca(), i_lnspace, segs, cmap=cmap)
+    # plt.clabel(cs, inline=True, fontsize=8, fmt=lambda x: f'i = {x:.2f}')
+        # plt.contour(xn, xn, np.array([[J(np.array([[x], [y]])) for x in xn] for y in xn]), cmap=cmap, alpha=0.5)
+
+    plt.savefig(f'{path}\\partial_functs.png')
+
+
+    for iy, i in enumerate(i_lnspace):
         plt.clf()
         plt.title(f'Coupe de la fonction ({i+1}/{imax + 1})')
-        plt.plot(x, y[i])
+        plt.plot(xn, yns[iy])
         plt.savefig(f'{path}\\partial_funct({i+1}).png')
 
 
