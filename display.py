@@ -26,7 +26,7 @@ def plot_contour(f: Function, xlim: tuple[float, float], ylim: tuple[float, floa
 
 
 def display_convergence_2d(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
-    Xn, _ = methode(J, X0, 1e-3, 1000)
+    Xn = methode(J, X0, 5e-2, 1000)
     
     plot_contour(J, (-10, 10), (-10, 10))
     plt.plot(Xn[:, 0], Xn[:, 1], 'r*--', label='Gradient Descente')
@@ -40,7 +40,7 @@ def display_convergence_by_X0(path: str, J: QuadraticFunction, xlim: tuple[float
         np.linspace(xlim[0], xlim[1], ngrid),
         np.linspace(ylim[0], ylim[1], ngrid)
     )
-    Z = np.array([[methode(J, np.array([[x[i, j]], [y[i, j]]]), eps, niter)[1] for i in range(ngrid)] for j in range(ngrid)])
+    Z = np.array([[len(methode(J, np.array([[x[i, j]], [y[i, j]]]), eps, niter)) for i in range(ngrid)] for j in range(ngrid)])
 
     plt.clf()
     plt.imshow(Z, extent=[xlim[0], xlim[1], ylim[0], ylim[1]], origin='lower') # type: ignore
@@ -50,10 +50,10 @@ def display_convergence_by_X0(path: str, J: QuadraticFunction, xlim: tuple[float
 
 
 def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
-    Xn, imax = methode(J, X0, 1e-3, 1000)
+    Xn = methode(J, X0, 5e-2, 1000)
     
     
-    i_lnspace = np.linspace(0, imax, 10, dtype=int, endpoint=False)
+    i_lnspace = np.linspace(0, len(Xn), 10, dtype=int, endpoint=False)
     Xn        = Xn[i_lnspace]
     grad      = [J.df(X) for X in Xn]
     grad_norm = [grad_val / np.linalg.norm(grad_val) for grad_val in grad]
@@ -78,47 +78,47 @@ def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, method
 
     for iy, i in enumerate(i_lnspace):
         plt.clf()
-        plt.title(f'Coupe de la fonction ({i+1}/{imax + 1})')
+        plt.title(f'Coupe de la fonction ({i+1}/{len(Xn) + 1})')
         plt.plot(xn, yns[iy])
         plt.savefig(f'{path}\\partial_funct({i+1}).png')
 
 
 def display_norm(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
 
-    Xn, imax = methode(J, X0, 1e-3, 1000)
+    Xn = methode(J, X0, 5e-2, 1000)
     
     grad = [J.df(X) for X in Xn]
 
     plt.clf()
     plt.title('Convergence de la solution')
-    plt.plot(np.arange(imax + 1), [np.linalg.norm(grad_val) for grad_val in grad])
+    plt.plot(np.arange(len(Xn)), [np.linalg.norm(grad_val) for grad_val in grad])
     plt.savefig(f'{path}\\convergence.png')
     print(f'File saved at {path}\\convergence.png')
 
 
 def display_error(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
 
-    Xn, imax = methode(J, X0, 1e-5, 20_000)
+    Xn = methode(J, X0, 5e-2, 20_000)
     
     err = np.array([np.linalg.norm(J.A @ x - J.b) for x in Xn])
 
     plt.clf()
     plt.title('Erreur de la solution')
-    plt.semilogy(np.arange(imax), err)
+    plt.semilogy(np.arange(len(Xn)), err)
     plt.savefig(f'{path}\\error.png')
     print(f'File saved at {path}\\error.png')
 
 
 def display_compare_error(path: str, J: QuadraticFunction, X0: np.ndarray,
-                          methodes_labels: list[tuple[METHODE_TYPE, str]]):
+                          methodes_labels: tuple[tuple[METHODE_TYPE, str], ...]):
     plt.clf()
     for methode, label in methodes_labels:
-        Xn, imax = methode(J, X0, 1e-5, 20_000)
+        Xn = methode(J, X0, 5e-2, 20_000)
     
         err = np.array([np.linalg.norm(J.A @ x - J.b) for x in Xn])
 
         plt.title('Erreur de la solution')
-        plt.loglog(np.arange(imax), err, label=label)
+        plt.loglog(np.arange(len(Xn)), err, label=label)
     plt.savefig(f'{path}\\error.png')
     print(f'File saved at {path}\\error.png')
 
@@ -141,3 +141,6 @@ def display_ka(path : str,  nmax :int ) :
     plt.grid()
     plt.savefig(path)
     print(f'File saved at {path}')
+
+
+

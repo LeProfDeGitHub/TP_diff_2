@@ -37,22 +37,6 @@ class QuadraticFunction(Function):
         self.c = c
 
 
-def tri_diagonal(n, a, b, c) :
-    """
-    create a tri-diagonal matrix of size n
-    with 3*i**2 on the diagonal and -1 on the sub-diagonal and super-diagonal
-    :param n: size of the matrix
-    :return:  Matrix A of size n
-    """
-    A = a * np.eye(n)
-    for i in range(n):
-        A[i, i] = 3*(i+1)**2
-    A = A - np.eye(n, k=1) - np.eye(n, k=-1)
-    b = np.array([[i+1] for i in range(n)])
-    c = 0
-    return a*np.eye(n) + b*np.eye(n, k=1) + c*np.eye(n, k=-1)
-
-
 def get_zvankin_quad(n):
     """
     create a tri-diagonal matrix of size n
@@ -60,11 +44,10 @@ def get_zvankin_quad(n):
     :param n: size of the matrix
     :return: quadratic function object
     """
-    A = tri_diagonal(n, 2, -1, -1)
+    A = 2 * np.eye(n) - np.eye(n, k=1) - np.eye(n, k=-1)
     b = np.array([[i+1] for i in range(n)])
     c = 0
     return QuadraticFunction(A, b, c)
-
 
 def get_other_diago(n: int):
     """
@@ -128,7 +111,21 @@ def get_J_2(n: int):
 
     return Function(func, grad, hessian)
 
+
+
+
+
+
 if __name__ == '__main__':
+
+    Quad_func = get_zvankin_quad(2)
+
+    print("========= TEST Zvankin quadratic func =======================")
+    print(f"{Quad_func.A = }")
+    print(f"{Quad_func.b = }")
+    print(f"{Quad_func.c = }")
+
+
     A = np.array([[1.0, -1.0],
                   [3.0,  0.0]])
     b = np.array([[-0.1],
@@ -138,7 +135,8 @@ if __name__ == '__main__':
 
     J2 = get_J_2(2)
 
-    print("TEST get_J_1 =======================")
+    print()
+    print("========= TEST get_J_1 =======================")
     X0 = np.array([[-5.0], [5.0]])
     f_J1 = 20_064.66
     df_J1 = np.array([[19_796.08],
@@ -156,7 +154,7 @@ if __name__ == '__main__':
     print(f"{J1.ddf(X0) - ddf_J1 = }")
 
     print()
-    print("TEST get_J_2 =======================")
+    print("========= TEST get_J_2 =======================")
     x, y = 1.0, 2.0
     X0 = np.array([[x], [y]])
     f_J2 = np.log(np.exp(x) + np.exp(y))
