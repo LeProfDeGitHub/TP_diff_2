@@ -2,9 +2,19 @@ from typing import Callable, NewType
 import numpy as np
 from function import QuadraticFunction, Function, condi_A
 
-METHODE_TYPE = Callable[[QuadraticFunction, np.ndarray, float, int], np.ndarray]
+QUAD_METHODE_TYPE = Callable[[QuadraticFunction,
+                              np.ndarray,
+                              float,
+                              int],
+                              np.ndarray]
 
-def quadratic_gradient_descent(f: QuadraticFunction, X0, eps: float, niter: int):
+METHODE_TYPE = Callable[[Function,
+                         np.ndarray,
+                         float,
+                         int],
+                         np.ndarray]
+
+def quadratic_gradient_descent(f: QuadraticFunction, X0: np.ndarray, eps: float, niter: int):
     """
     find the minimum of a quadratic function using the gradient descent method
     :param f: quadratic function object
@@ -24,7 +34,7 @@ def quadratic_gradient_descent(f: QuadraticFunction, X0, eps: float, niter: int)
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
     return X
 
-def quadratic_conjuguate_gradient_method(f: QuadraticFunction, X0, eps: float, niter: int):
+def quadratic_conjuguate_gradient_method(f: QuadraticFunction, X0: np.ndarray, eps: float, niter: int):
     X = np.array([X0])
     r0 = f.A @ X0 - f.b
     p = -r0
@@ -39,7 +49,7 @@ def quadratic_conjuguate_gradient_method(f: QuadraticFunction, X0, eps: float, n
         r0 = r1
     return X
 
-def newton(f: Function, X0, eps: float, niter: int):
+def newton(f: Function, X0: np.ndarray, eps: float, niter: int):
     """
     find the minimum of a function using the newton method
     :param f: function object
@@ -58,7 +68,7 @@ def newton(f: Function, X0, eps: float, niter: int):
         X = np.append(X, np.array([X[-1] + p]), axis=0)
     return X
 
-def gradient_descent_fix_step(f: Function, X0, eps: float, niter: int, alpha: float = 1e-2):
+def gradient_descent_fix_step(f: Function, X0: np.ndarray, eps: float, niter: int, alpha: float = 1e-2):
     """
     use the gradient descent method with a fixed step to find the minimum of a function
     :param f: function object
@@ -81,7 +91,7 @@ def gradient_descent_fix_step(f: Function, X0, eps: float, niter: int, alpha: fl
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
     return X
 
-def gradient_descent_optimal_step(f: Function, X0, eps: float, niter: int):
+def gradient_descent_optimal_step(f: Function, X0: np.ndarray, eps: float, niter: int):
     """
     use the gradient descent method with an optimal step to find the minimum of a function
     :param f: fonction object
@@ -102,7 +112,7 @@ def gradient_descent_optimal_step(f: Function, X0, eps: float, niter: int):
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
     return X
 
-def newton_optimal_step(f: Function, X0, eps: float, niter: int):
+def newton_optimal_step(f: Function, X0: np.ndarray, eps: float, niter: int):
     """
     find the minimum of a function using the newton method with an optimal step
     :param f: function object
@@ -126,7 +136,7 @@ def newton_optimal_step(f: Function, X0, eps: float, niter: int):
 
 
 
-def BFGS(J : Function , x0 , eps : float, n :int):
+def BFGS(J: Function, x0: np.ndarray, eps: float, n: int):
     """
     find the minimum of a function using the
     Broyden Fletcher Goldfarb Shanno method
@@ -148,3 +158,4 @@ def BFGS(J : Function , x0 , eps : float, n :int):
         B = B + (y @ y.T)/(y.T @ s) - (B @ s @ s.T @ B)/(s.T @ B @ s)
         X = np.append(X, np.array([x]), axis=0)
     return X
+

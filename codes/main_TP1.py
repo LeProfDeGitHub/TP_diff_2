@@ -1,28 +1,34 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from function import QuadraticFunction, get_other_diago, get_zvankin_quad, condi_A
-from display import (display_convergence_2d,
-                     display_convergence_by_X0,
-                     display_partial_func,
-                     display_norm,
-                     display_error,
-                     display_compare_error,
-                     display_ka)
-from methods import (gradient_descent_fix_step,
-                     gradient_descent_optimal_step,
-                     quadratic_gradient_descent,
-                     quadratic_conjuguate_gradient_method,)
+from display_TP1 import (display_convergence_2d,
+                         display_convergence_by_X0,
+                         display_partial_func,
+                         display_norm,
+                         display_error,
+                         display_compare_error,
+                         display_ka)
+from opti_methods import (QUAD_METHODE_TYPE,
+                          gradient_descent_fix_step,
+                          gradient_descent_optimal_step,
+                          quadratic_gradient_descent,
+                          quadratic_conjuguate_gradient_method,)
 from tools import (add_floders,
                    display_func,
                    display_func_n,)
 
-METHODS_PATH = ((gradient_descent_fix_step           , 'grad_desc_fix_step'    ),
-                (quadratic_gradient_descent          , 'grad_desc_optimal_step'),
-                (quadratic_conjuguate_gradient_method, 'conjuguate_gradient'   ),)
 
-METHODS_LABELS = ((gradient_descent_fix_step           , 'Gradient Descent Fix Step'    ),
-                  (quadratic_gradient_descent          , 'Gradient Descent Optimal Step'),
-                  (quadratic_conjuguate_gradient_method, 'Conjuguate Gradient'          ),)
+METHODS_PATH: tuple[tuple[QUAD_METHODE_TYPE, str], ...] = (
+    (gradient_descent_fix_step           , 'grad_desc_fix_step'    ),
+    (quadratic_gradient_descent          , 'grad_desc_optimal_step'),
+    (quadratic_conjuguate_gradient_method, 'conjuguate_gradient'   ),
+)
+
+METHODS_LABELS: tuple[tuple[QUAD_METHODE_TYPE, str], ...] = (
+    (gradient_descent_fix_step           , 'Gradient Descent Fix Step'    ),
+    (quadratic_gradient_descent          , 'Gradient Descent Optimal Step'),
+    (quadratic_conjuguate_gradient_method, 'Conjuguate Gradient'          )
+)
 
 @display_func_n(3)
 def display_all_converence_2d():
@@ -32,7 +38,7 @@ def display_all_converence_2d():
     for method, path in METHODS_PATH:
         display_convergence_2d(f'figure\\{path}',
                                get_zvankin_quad(2),
-                               np.array([[-5], [-5]]),
+                               np.array([[-5], [-3]]),
                                method)
 
 @display_func_n(3)
@@ -56,7 +62,7 @@ def display_all_partial_func():
     for method, path in METHODS_PATH:
         display_partial_func(f'figure\\{path}\\partial_func',
                              get_zvankin_quad(2),
-                             np.array([[-5], [-5]]),
+                             np.array([[-5], [-3]]),
                              method)
 
 @display_func_n(3)
@@ -67,7 +73,7 @@ def display_all_norm():
     for method, path in METHODS_PATH:
         display_norm(f'figure\\{path}',
                      get_zvankin_quad(2),
-                     np.array([[-5], [-5]]),
+                     np.array([[-5], [-3]]),
                      method)
 
 @display_func_n(3)
@@ -78,7 +84,7 @@ def display_all_error():
     for method, path in METHODS_PATH:
         display_error(f'figure\\{path}',
                       get_zvankin_quad(2),
-                      np.array([[-5], [-5]]),
+                      np.array([[-5], [-3]]),
                       method)
 
 @display_func_n(3)
@@ -88,7 +94,7 @@ def display_all_compare_error():
     '''
     display_compare_error(f'figure\\',
                           get_zvankin_quad(2),
-                          np.array([[-5], [-5]]),
+                          np.array([[-5], [-3]]),
                           METHODS_LABELS)
 
 @display_func_n(1)
@@ -140,17 +146,15 @@ def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
 
 
 def main():
-    paths = [path for _, path in METHODS_PATH]
-    paths.extend([f"{path}\\partial_func" for _, path in METHODS_PATH])
-    add_floders(tuple(paths))
+    # paths = [path for _, path in METHODS_PATH]
+    # paths.extend([f"{path}\\partial_func" for _, path in METHODS_PATH])
+    # add_floders(tuple(paths))
 
-
-
-    for func in display_func.funcs:
-        func()
+    # for func in display_func.funcs:
+    #     func()
 
     # compare a conditioned matrix and an unconditioned matrix for a quadratic function
-    # comparaison_condi(get_other_diago(1000), np.array([[0] for _ in range(1000)]), 1e-10, int(2e3))
+    comparaison_condi(get_other_diago(1000), np.array([[0] for _ in range(1000)]), 1e-10, int(2e3))
 
 
 if __name__ == '__main__':

@@ -1,4 +1,3 @@
-import autograd
 import numpy as np
 
 
@@ -65,7 +64,7 @@ def get_other_diago(n: int):
     return QuadraticFunction(A, b, c)
 
 
-def condi_A( f : QuadraticFunction) :
+def condi_A(f: QuadraticFunction) :
     """
     condition A with the diagonal matrix D = diag(1/(i+1))
     :param f: QuadraticFunction

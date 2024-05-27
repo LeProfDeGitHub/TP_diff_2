@@ -1,23 +1,22 @@
-from matplotlib import pyplot as plt
 import numpy as np
 
-from function import Function, QuadraticFunction, get_other_diago, condi_A
 from matplotlib import pyplot as plt
 from matplotlib import contour as ctr
-# from matplotlib import colors as plt_color
 
-from methods import METHODE_TYPE
+from function import Function, QuadraticFunction, get_other_diago, condi_A
+from opti_methods import QUAD_METHODE_TYPE
 
 
-
-def plot_contour(f: Function, xlim: tuple[float, float], ylim: tuple[float, float], norm=None):
+def plot_contour(f: Function, xlim: tuple[float, float], ylim: tuple[float, float], norm = None,
+                 k: np.ndarray | None = None):
     x, y = np.meshgrid(
         np.linspace(xlim[0], xlim[1], 100),
         np.linspace(ylim[0], ylim[1], 100)
     )
     z = np.array([f(np.array([[x[i, j]], [y[i, j]]])) for i in range(100) for j in range(100)]).reshape(100, 100)
 
-    k = np.linspace(np.nanmin(z), np.nanmax(z), 100)
+    if k is None:
+        k = np.linspace(np.nanmin(z), np.nanmax(z), 100)
 
     plt.clf()
     contour = plt.contourf(x, y, z, levels=k, cmap='viridis', alpha=1, norm=norm)
@@ -25,7 +24,7 @@ def plot_contour(f: Function, xlim: tuple[float, float], ylim: tuple[float, floa
     plt.colorbar(contour, label='f(x, y)')
 
 
-def display_convergence_2d(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
+def display_convergence_2d(path: str, J: QuadraticFunction, X0: np.ndarray, methode: QUAD_METHODE_TYPE):
     Xn = methode(J, X0, 5e-2, 1000)
     
     plot_contour(J, (-10, 10), (-10, 10))
@@ -35,7 +34,7 @@ def display_convergence_2d(path: str, J: QuadraticFunction, X0: np.ndarray, meth
 
 
 def display_convergence_by_X0(path: str, J: QuadraticFunction, xlim: tuple[float, float], ylim: tuple[float, float],
-                              ngrid: int, eps: float, niter: int, methode: METHODE_TYPE):
+                              ngrid: int, eps: float, niter: int, methode: QUAD_METHODE_TYPE):
     x, y = np.meshgrid(
         np.linspace(xlim[0], xlim[1], ngrid),
         np.linspace(ylim[0], ylim[1], ngrid)
@@ -49,7 +48,7 @@ def display_convergence_by_X0(path: str, J: QuadraticFunction, xlim: tuple[float
     print(f'File saved at {path}\\convergence_by_X0.png')
 
 
-def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
+def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, methode: QUAD_METHODE_TYPE):
     Xn = methode(J, X0, 5e-2, 1000)
     
     
@@ -83,7 +82,7 @@ def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, method
         plt.savefig(f'{path}\\partial_funct({i+1}).png')
 
 
-def display_norm(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
+def display_norm(path: str, J: QuadraticFunction, X0: np.ndarray, methode: QUAD_METHODE_TYPE):
 
     Xn = methode(J, X0, 5e-2, 1000)
     
@@ -96,7 +95,7 @@ def display_norm(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHO
     print(f'File saved at {path}\\convergence.png')
 
 
-def display_error(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
+def display_error(path: str, J: QuadraticFunction, X0: np.ndarray, methode: QUAD_METHODE_TYPE):
 
     Xn = methode(J, X0, 5e-2, 20_000)
     
@@ -110,7 +109,7 @@ def display_error(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METH
 
 
 def display_compare_error(path: str, J: QuadraticFunction, X0: np.ndarray,
-                          methodes_labels: tuple[tuple[METHODE_TYPE, str], ...]):
+                          methodes_labels: tuple[tuple[QUAD_METHODE_TYPE, str], ...]):
     plt.clf()
     for methode, label in methodes_labels:
         Xn = methode(J, X0, 5e-2, 20_000)
@@ -119,6 +118,10 @@ def display_compare_error(path: str, J: QuadraticFunction, X0: np.ndarray,
 
         plt.title('Erreur de la solution')
         plt.loglog(np.arange(len(Xn)), err, label=label)
+    plt.legend()
+    plt.grid()
+    plt.xlabel('Nombre d\'itérations')
+    plt.ylabel('Erreur')
     plt.savefig(f'{path}\\error.png')
     print(f'File saved at {path}\\error.png')
 
@@ -141,6 +144,4 @@ def display_ka(path : str,  nmax :int ) :
     plt.grid()
     plt.savefig(path)
     print(f'File saved at {path}')
-
-
 
