@@ -1,5 +1,5 @@
 from typing import Callable, NewType
-import autograd.numpy as np
+import numpy as np
 from function import QuadraticFunction, Function, condi_A
 
 METHODE_TYPE = Callable[[QuadraticFunction, np.ndarray, float, int], tuple[np.ndarray, int]]

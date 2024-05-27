@@ -1,5 +1,5 @@
 from matplotlib import pyplot as plt
-import autograd.numpy as np
+import numpy as np
 
 from function import Function, QuadraticFunction, get_other_diago, condi_A
 from matplotlib import pyplot as plt
@@ -25,14 +25,28 @@ def plot_contour(f: Function, xlim: tuple[float, float], ylim: tuple[float, floa
     plt.colorbar(contour, label='f(x, y)')
 
 
-
 def display_convergence_2d(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
     Xn, _ = methode(J, X0, 1e-3, 1000)
     
     plot_contour(J, (-10, 10), (-10, 10))
     plt.plot(Xn[:, 0], Xn[:, 1], 'r*--', label='Gradient Descente')
     plt.savefig(f'{path}\\convergence_grad_de.png')
+    print(f'File saved at {path}\\convergence_grad_de.png')
 
+
+def display_convergence_by_X0(path: str, J: QuadraticFunction, xlim: tuple[float, float], ylim: tuple[float, float],
+                              ngrid: int, eps: float, niter: int, methode: METHODE_TYPE):
+    x, y = np.meshgrid(
+        np.linspace(xlim[0], xlim[1], ngrid),
+        np.linspace(ylim[0], ylim[1], ngrid)
+    )
+    Z = np.array([[methode(J, np.array([[x[i, j]], [y[i, j]]]), eps, niter)[1] for i in range(ngrid)] for j in range(ngrid)])
+
+    plt.clf()
+    plt.imshow(Z, extent=[xlim[0], xlim[1], ylim[0], ylim[1]], origin='lower') # type: ignore
+    plt.colorbar(label='Nombre d\'itérations')
+    plt.savefig(f'{path}\\convergence_by_X0.png')
+    print(f'File saved at {path}\\convergence_by_X0.png')
 
 
 def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
@@ -59,6 +73,7 @@ def display_partial_func(path: str, J: QuadraticFunction, X0: np.ndarray, method
         # plt.contour(xn, xn, np.array([[J(np.array([[x], [y]])) for x in xn] for y in xn]), cmap=cmap, alpha=0.5)
 
     plt.savefig(f'{path}\\partial_functs.png')
+    print(f'File saved at {path}\\partial_functs.png')
 
 
     for iy, i in enumerate(i_lnspace):
@@ -78,6 +93,8 @@ def display_norm(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHO
     plt.title('Convergence de la solution')
     plt.plot(np.arange(imax + 1), [np.linalg.norm(grad_val) for grad_val in grad])
     plt.savefig(f'{path}\\convergence.png')
+    print(f'File saved at {path}\\convergence.png')
+
 
 def display_error(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METHODE_TYPE):
 
@@ -89,6 +106,8 @@ def display_error(path: str, J: QuadraticFunction, X0: np.ndarray, methode: METH
     plt.title('Erreur de la solution')
     plt.semilogy(np.arange(imax), err)
     plt.savefig(f'{path}\\error.png')
+    print(f'File saved at {path}\\error.png')
+
 
 def display_compare_error(path: str, J: QuadraticFunction, X0: np.ndarray,
                           methodes_labels: list[tuple[METHODE_TYPE, str]]):
@@ -101,6 +120,7 @@ def display_compare_error(path: str, J: QuadraticFunction, X0: np.ndarray,
         plt.title('Erreur de la solution')
         plt.loglog(np.arange(imax), err, label=label)
     plt.savefig(f'{path}\\error.png')
+    print(f'File saved at {path}\\error.png')
 
 
 def display_ka(path : str,  nmax :int ) :
@@ -120,3 +140,4 @@ def display_ka(path : str,  nmax :int ) :
     plt.plot(range(1, nmax), ka)
     plt.grid()
     plt.savefig(path)
+    print(f'File saved at {path}')

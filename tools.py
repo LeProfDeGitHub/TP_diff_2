@@ -13,6 +13,7 @@ def add_floders():
     os.makedirs('figure')
     os.makedirs('figure\\grad_desc_fix_step')
     os.makedirs('figure\\grad_desc_optimal_step')
+    os.makedirs('figure\\conjuguate_gradient')
     os.makedirs('figure\\grad_desc_fix_step\\partial_func')
     os.makedirs('figure\\grad_desc_optimal_step\\partial_func')
 

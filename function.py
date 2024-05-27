@@ -1,5 +1,5 @@
 import autograd
-import autograd.numpy as np
+import numpy as np
 
 
 class Function:
@@ -101,11 +101,73 @@ def get_J_1(A: np.ndarray, b: np.ndarray):
     def func(X):
         return np.sum([np.exp(A[:, i].T @ X + b[i]) for i in range(A.shape[1])])
 
-    return Function(func, autograd.grad(func), autograd.hessian(func))
+    def grad(X):
+        return np.array([[np.sum([A[k, i] * np.exp(A[:, i].T @ X + b[i]) for i in range(A.shape[1])])]
+                         for k in range(A.shape[0])])
+
+    def hessian(X):
+        return np.array([[np.sum([A[k, i] * A[l, i] * np.exp(A[:, i].T @ X + b[i]) for i in range(A.shape[1])])
+                         for l in range(A.shape[0])]
+                         for k in range(A.shape[0])])
+
+    return Function(func, grad, hessian)
 
 def get_J_2(n: int):
     def func(X):
         return np.sum([np.log(np.exp(X[i])) for i in range(n)])
 
-    return Function(func, autograd.grad(func), autograd.hessian(func))
+    def grad(X):
+        return np.array([[np.exp(X[i]) / np.sum([np.exp(X[j]) for j in range(n)])] for i in range(n)])
+
+    def hessian(X):
+        sum_exp = np.sum([np.exp(X[j]) for j in range(n)])
+        sum_exp_square = sum_exp**2
+        return np.array([[-np.exp(X[i]+X[j]) / sum_exp_square
+                         for j in range(n)]
+                         for i in range(n)]) + np.diag([np.exp(X[i]) / sum_exp for i in range(n)])
+
+    return Function(func, grad, hessian)
+
+if __name__ == '__main__':
+    A = np.array([[1.0, -1.0],
+                  [3.0,  0.0]])
+    b = np.array([[-0.1],
+                  [-0.1]])
+
+    J1 = get_J_1(A, b)
+
+    J2 = get_J_2(2)
+
+    print("TEST get_J_1 =======================")
+    X0 = np.array([[-5.0], [5.0]])
+    f_J1 = 20_064.66
+    df_J1 = np.array([[19_796.08],
+                      [59_791.11]])
+    ddf_J1 = np.array([[20_064.66,  59_791.11],
+                       [59_791.11, 179_373.33]])
+    print(f"{A = }")
+    print(f"{b = }")
+    print(f"{X0 = }")
+    print(f"{J1(X0) = }")
+    print(f"{J1.df(X0) = }")
+    print(f"{J1.ddf(X0) = }")
+    print(f"{J1(X0) - f_J1 = }")
+    print(f"{J1.df(X0) - df_J1 = }")
+    print(f"{J1.ddf(X0) - ddf_J1 = }")
+
+    print()
+    print("TEST get_J_2 =======================")
+    x, y = 1.0, 2.0
+    X0 = np.array([[x], [y]])
+    f_J2 = np.log(np.exp(x) + np.exp(y))
+    df_J2 = (1/(np.exp(x) + np.exp(y))) * np.array([[np.exp(x)], [np.exp(y)]])
+    ddf_J2 = (np.exp(x+y)/(np.exp(x) + np.exp(y))**2) * np.array([[1, -1],
+                                                                  [-1,  1]])
+    print(f"{X0 = }")
+    print(f"{J2(X0) = }")
+    print(f"{J2.df(X0) = }")
+    print(f"{J2.ddf(X0) = }")
+    print(f"{J2(X0) - f_J2 = }")
+    print(f"{J2.df(X0) - df_J2 = }")
+    print(f"{J2.ddf(X0) - ddf_J2 = }")
 
