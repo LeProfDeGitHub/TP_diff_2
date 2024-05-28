@@ -11,7 +11,6 @@ from display_TP1 import (display_convergence_2d,
 from opti_methods import (METHODE_TYPE,
                           METHODS_LABEL,
                           gradient_descent_fix_step,
-                          gradient_descent_optimal_step,
                           quadratic_gradient_descent_optimal_step,
                           quadratic_conjuguate_gradient_method,)
 from tools import (add_floders,
