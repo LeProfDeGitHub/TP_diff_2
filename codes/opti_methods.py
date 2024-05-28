@@ -12,13 +12,15 @@ METHODE_TYPE = Callable[[Function,
 
 def gradient_descent_fix_step(f: Function, X0: np.ndarray, eps: float, niter: int, alpha: float = 1e-2):
     """
-    use the gradient descent method with a fixed step to find the minimum of a function
-    :param f: function object
-    :param X0: starting point
-    :param eps: error
-    :param niter: number of iterations
-    :param alpha: step used in the gradient descent method
-    :return: X : array of points, i+1 : number of iterations
+    Find the minimum of a function using the gradient descent method with a fixed step with the following parameters :
+    - `f: Function` a function object that has gradient method (`f.df`)
+    - `X0: np.ndarray` the starting point of the method
+    - `eps: float` the maximum error allowed
+    - `niter: int` the maximum number of iterations allowed
+    - `alpha: float` the step of the method
+
+    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum
+    and the last element of the array is the minimum of the function.
     """
     # Control that it's possible to find a minimum with the given step
     if alpha >= eps:
@@ -42,7 +44,7 @@ def quadratic_gradient_descent_optimal_step(f: Function, X0: np.ndarray, eps: fl
     - `eps: float` the maximum error allowed
     - `niter: int` the maximum number of iterations allowed
 
-    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum.
+    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum
     and the last element of the array is the minimum of the function.
     """
     X = np.array([X0])
@@ -63,19 +65,16 @@ def quadratic_conjuguate_gradient_method(f: Function, X0: np.ndarray, eps: float
     - `eps: float` the maximum error allowed
     - `niter: int` the maximum number of iterations allowed
 
-    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum.
+    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum
     and the last element of the array is the minimum of the function.
     """
 
     X = np.array([X0])
-    r0 = p = - f.df(X0)
-    # r0 = p = f.b - f.A @ X0
+    r0 = p = - f.df(X0) # equivalent to r0 = p = b - A @ X0
     for i in range(niter):
-        alpha = (r0.T @ r0)/(p.T @ f.ddf(X[-1]) @ p)
-        # alpha = (r0.T @ r0)/(p.T @ f.A @ p)
+        alpha = (r0.T @ r0)/(p.T @ f.ddf(X[-1]) @ p) # equivalent to alpha = (r0.T @ r0)/(p.T @ A @ p)
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
         r1 = - f.df(X[-1])
-        # r1 = f.b - f.A @ X[-1]
         if np.linalg.norm(r1) < eps:
             break
         beta = (r1.T @ r1)/(r0.T @ r0)
@@ -85,12 +84,14 @@ def quadratic_conjuguate_gradient_method(f: Function, X0: np.ndarray, eps: float
 
 def newton(f: Function, X0: np.ndarray, eps: float, niter: int):
     """
-    find the minimum of a function using the newton method
-    :param f: function object
-    :param X0: starting point
-    :param eps: error
-    :param niter: number of iterations
-    :return: X : array of points, i+1 : number of iterations
+    Find the minimum of a function using the newton method with the following parameters :
+    - `f: Function` a function object that has gradient and hessian methods (`f.df` and `f.ddf`)
+    - `X0: np.ndarray` the starting point of the method
+    - `eps: float` the maximum error allowed
+    - `niter: int` the maximum number of iterations allowed
+
+    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum
+    and the last element of the array is the minimum of the function.
     """
     X = np.array([X0])
     for i in range(niter):
@@ -104,12 +105,15 @@ def newton(f: Function, X0: np.ndarray, eps: float, niter: int):
 
 def gradient_descent_optimal_step(f: Function, X0: np.ndarray, eps: float, niter: int):
     """
-    use the gradient descent method with an optimal step to find the minimum of a function
-    :param f: fonction object
-    :param X0: starting point
-    :param eps: error
-    :param niter: number of iterations
-    :return: X : array of points, i+1 : number of iterations
+    Find the minimum of a function using the gradient descent method with an optimal step
+    that is found using the newton method. The method use the following parameters :
+    - `f: Function` a function object that has gradient and hessian methods (`f.df` and `f.ddf`)
+    - `X0: np.ndarray` the starting point of the method
+    - `eps: float` the maximum error allowed
+    - `niter: int` the maximum number of iterations allowed
+
+    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum
+    and the last element of the array is the minimum of the function.
     """
     # !!!!! ATTENTION MARCHE PAS !!!!!
     X = np.array([X0])
@@ -118,19 +122,22 @@ def gradient_descent_optimal_step(f: Function, X0: np.ndarray, eps: float, niter
         if np.linalg.norm(p) < eps:
             break
         f_alpha = f.partial(X[-1], p)
-        alpha, _ = newton(f_alpha, np.array([[0]]), eps, niter)
+        alpha = newton(f_alpha, np.array([[0]]), eps, niter)
         alpha = alpha[-1]
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
     return X
 
 def newton_optimal_step(f: Function, X0: np.ndarray, eps: float, niter: int):
     """
-    find the minimum of a function using the newton method with an optimal step
-    :param f: function object
-    :param X0: starting point
-    :param eps: error
-    :param niter: number of iterations
-    :return: X : array of points, i+1 : number of iterations
+    Find the minimum of a function using the newton method with an optimal step
+    that is found using the newton method. The method use the following parameters :
+    - `f: Function` a function object that has gradient and hessian methods (`f.df` and `f.ddf`)
+    - `X0: np.ndarray` the starting point of the method
+    - `eps: float` the maximum error allowed
+    - `niter: int` the maximum number of iterations allowed
+
+    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum
+    and the last element of the array is the minimum of the function.
     """
     X = np.array([X0])
     for i in range(niter):
@@ -140,30 +147,31 @@ def newton_optimal_step(f: Function, X0: np.ndarray, eps: float, niter: int):
         if np.linalg.norm(p) < eps:
             break
         f_alpha = f.partial(X[-1], p)
-        alpha, _ = newton(f_alpha, np.array([[0]]), eps, niter)
+        alpha = newton(f_alpha, np.array([[0]]), eps, niter)
         alpha = alpha[-1]
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
     return X
 
-def BFGS(J: Function, x0: np.ndarray, eps: float, n: int):
+def BFGS(f: Function, x0: np.ndarray, eps: float, n: int):
     """
-    find the minimum of a function using the
-    Broyden Fletcher Goldfarb Shanno method
-    :param J: function object
-    :param x0: starting point
-    :param eps: error
-    :param n: number of iterations
-    :return: X : array of points, i+1 : number of iterations
+    Find the minimum of a function using the BFGS method with the following parameters :
+    - `f: Function` a function object that has gradient method (`J.df`)
+    - `x0: np.ndarray` the starting point of the method
+    - `eps: float` the maximum error allowed
+    - `n: int` the maximum number of iterations allowed
+
+    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum
+    and the last element of the array is the minimum of the function.
     """
     X = np.array([x0])
     B = np.eye(len(x0))
-    while np.linalg.norm(J.df(X[-1])) > eps and len(X) < n :
-        d = - B @ J.df(X[-1])
-        alpha = BFGS(J.partial(X[-1], d), np.array([[0]]), eps, n)[0]
+    while np.linalg.norm(f.df(X[-1])) > eps and len(X) < n :
+        d = - B @ f.df(X[-1])
+        alpha = BFGS(f.partial(X[-1], d), np.array([[0]]), eps, n)[0]
         alpha = alpha[-1]
         x = X[-1] + alpha * d
         s = x - X[-1]
-        y = J.df(x) - J.df(X[-1])
+        y = f.df(x) - f.df(X[-1])
         B = B + (y @ y.T)/(y.T @ s) - (B @ s @ s.T @ B)/(s.T @ B @ s)
         X = np.append(X, np.array([x]), axis=0)
     return X
