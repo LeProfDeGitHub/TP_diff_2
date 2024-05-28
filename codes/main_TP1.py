@@ -1,12 +1,12 @@
 import numpy as np
 from function import QuadraticFunction, get_other_diago, get_zvankin_quad, condi_A
-from display_TP1 import (display_convergence_2d,
-                         display_convergence_by_X0,
-                         display_partial_func,
-                         display_norm,
-                         display_error,
-                         display_compare_error,
-                         display_ka)
+from display import (display_convergence_2d,
+                     display_convergence_by_X0,
+                     display_partial_func,
+                     display_norm,
+                     display_error,
+                     display_compare_error,
+                     display_ka)
 from opti_methods import (METHODE_TYPE,
                           METHODS_LABEL,
                           gradient_descent_fix_step,
@@ -17,13 +17,56 @@ from tools import (add_floders,
                    test_deco_n,)
 
 
+
+def comparaison_condi(f: QuadraticFunction, X0, eps: float, niter: int):
+    """
+    compare the number of iterations of the gradient descent method
+    and the conjugate gradient method for a given quadratic function.
+
+    :param f: QuadraticFunction object
+    :param X0: starting point
+    :param eps: error
+    :param niter: number of iterations
+    :return: none
+    """
+    print("------------------------------------------")
+    print("           unconditioned matrix           ")
+    print("------------------------------------------\n")
+    X_gd = quadratic_gradient_descent_optimal_step(f, X0, eps, niter)
+    print(f'gradient descent method optimal step: {len(X_gd)} iterations')
+    error = np.linalg.norm(f.df (X_gd[-1]))
+    print(f'error: {error}\n')
+
+    X_cg = quadratic_conjuguate_gradient_method(f, X0, eps, niter)
+    print(f'conjuguate gradient method: {len(X_cg)} iterations')
+    error = np.linalg.norm(f.df (X_cg[-1]))
+    print(f'error: {error }\n')
+
+    print("------------------------------------------")
+    print("             conditioned matrix           ")
+    print("------------------------------------------\n")
+
+    quad = condi_A(f)
+    X_gd = quadratic_gradient_descent_optimal_step(quad, X0, eps, niter)
+    print(f'gradient descent method optimal step: {len(X_gd)} iterations')
+    error = np.linalg.norm(quad.df (X_gd[-1]))
+    print(f'error: {error }\n')
+
+    X_cg = quadratic_conjuguate_gradient_method(quad, X0, eps, niter)
+    print(f'conjuguate gradient method: {len(X_cg)} iterations')
+    error = np.linalg.norm(quad.df (X_cg[-1]))
+    print(f'error: {error}\n')
+
+
+
+
 METHODS_PATH: tuple[tuple[METHODE_TYPE, str], ...] = (
     (gradient_descent_fix_step              , 'grad_desc_fix_step'    ),
     (quadratic_gradient_descent_optimal_step, 'grad_desc_optimal_step'),
     (quadratic_conjuguate_gradient_method   , 'conjuguate_gradient'   ),
 )
 
-
+# Objects to store the functions to be executed.
 func_collection = TestFuncsCollection("TP1")
 
 nbr_methods = len(METHODS_PATH)
@@ -121,45 +164,14 @@ def display_ka_wrp(test_funcs_collection: TestFuncsCollection):
     test_funcs_collection.print_current_nbr()
     display_ka('figure\\condition_number.png', 500)
 
-
-def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
+@test_deco_n(func_collection, 1)
+def comparaison_condi_wrp(test_funcs_collection: TestFuncsCollection):
     """
-    compare the number of iterations of the gradient descent method
-    and the conjugate gradient method for a given quadratic function.
-
-    :param f: QuadraticFunction object
-    :param X0: starting point
-    :param eps: error
-    :param niter: number of iterations
-    :return: none
+    Call comparaison_condi for a conditioned matrix and an unconditioned matrix for a quadratic function.
     """
-    print("------------------------------------------")
-    print("           unconditioned matrix           ")
-    print("------------------------------------------\n")
-    X_gd = quadratic_gradient_descent_optimal_step(f, X0, eps, niter)
-    print(f'gradient descent method optimal step: {len(X_gd)} iterations')
-    error = np.linalg.norm(f.df (X_gd[-1]))
-    print(f'error: {error}\n')
-
-    X_cg = quadratic_conjuguate_gradient_method(f, X0, eps, niter)
-    print(f'conjuguate gradient method: {len(X_cg)} iterations')
-    error = np.linalg.norm(f.df (X_cg[-1]))
-    print(f'error: {error }\n')
-
-    print("------------------------------------------")
-    print("             conditioned matrix           ")
-    print("------------------------------------------\n")
-
-    quad = condi_A(f)
-    X_gd = quadratic_gradient_descent_optimal_step(quad, X0, eps, niter)
-    print(f'gradient descent method optimal step: {len(X_gd)} iterations')
-    error = np.linalg.norm(quad.df (X_gd[-1]))
-    print(f'error: {error }\n')
-
-    X_cg = quadratic_conjuguate_gradient_method(quad, X0, eps, niter)
-    print(f'conjuguate gradient method: {len(X_cg)} iterations')
-    error = np.linalg.norm(quad.df (X_cg[-1]))
-    print(f'error: {error}\n')
+    test_funcs_collection.current_nbr += 1
+    test_funcs_collection.print_current_nbr()
+    comparaison_condi(get_other_diago(1000), np.array([[0] for _ in range(1000)]), 1e-10, int(2e3))
 
 
 def main():
@@ -169,9 +181,6 @@ def main():
 
     for func in func_collection.funcs:
         func()
-
-    # compare a conditioned matrix and an unconditioned matrix for a quadratic function
-    comparaison_condi(get_other_diago(1000), np.array([[0] for _ in range(1000)]), 1e-10, int(2e3))
 
 
 if __name__ == '__main__':
