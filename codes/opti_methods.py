@@ -1,6 +1,6 @@
-from typing import Callable, NewType
+from typing import Callable
 import numpy as np
-from function import QuadraticFunction, Function, condi_A
+from function import Function
 
 
 METHODE_TYPE = Callable[[Function,

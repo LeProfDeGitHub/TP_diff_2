@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import contour as ctr
 
-from function import Function, QuadraticFunction, get_other_diago, condi_A
+from function import Function, get_other_diago, condi_A
 from opti_methods import METHODE_TYPE
 
 

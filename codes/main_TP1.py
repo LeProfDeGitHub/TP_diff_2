@@ -1,4 +1,3 @@
-from matplotlib import pyplot as plt
 import numpy as np
 from function import QuadraticFunction, get_other_diago, get_zvankin_quad, condi_A
 from display_TP1 import (display_convergence_2d,
