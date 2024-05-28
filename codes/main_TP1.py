@@ -8,100 +8,119 @@ from display_TP1 import (display_convergence_2d,
                          display_error,
                          display_compare_error,
                          display_ka)
-from opti_methods import (QUAD_METHODE_TYPE,
+from opti_methods import (METHODE_TYPE,
+                          METHODS_LABEL,
                           gradient_descent_fix_step,
                           gradient_descent_optimal_step,
-                          quadratic_gradient_descent,
+                          quadratic_gradient_descent_optimal_step,
                           quadratic_conjuguate_gradient_method,)
 from tools import (add_floders,
-                   display_func,
-                   display_func_n,)
+                   TestFuncsCollection,
+                   test_deco_n,)
 
 
-METHODS_PATH: tuple[tuple[QUAD_METHODE_TYPE, str], ...] = (
-    (gradient_descent_fix_step           , 'grad_desc_fix_step'    ),
-    (quadratic_gradient_descent          , 'grad_desc_optimal_step'),
-    (quadratic_conjuguate_gradient_method, 'conjuguate_gradient'   ),
+METHODS_PATH: tuple[tuple[METHODE_TYPE, str], ...] = (
+    (gradient_descent_fix_step              , 'grad_desc_fix_step'    ),
+    (quadratic_gradient_descent_optimal_step, 'grad_desc_optimal_step'),
+    (quadratic_conjuguate_gradient_method   , 'conjuguate_gradient'   ),
 )
 
-METHODS_LABELS: tuple[tuple[QUAD_METHODE_TYPE, str], ...] = (
-    (gradient_descent_fix_step           , 'Gradient Descent Fix Step'    ),
-    (quadratic_gradient_descent          , 'Gradient Descent Optimal Step'),
-    (quadratic_conjuguate_gradient_method, 'Conjuguate Gradient'          )
-)
 
-@display_func_n(3)
-def display_all_converence_2d():
+func_collection = TestFuncsCollection("TP1")
+
+nbr_methods = len(METHODS_PATH)
+
+X0 = np.array([[-5], [1]])
+
+@test_deco_n(func_collection, nbr_methods)
+def display_all_converence_2d(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_convergence_2d for each method in METHODS_PATH.
     '''
+    J = get_zvankin_quad(2)
     for method, path in METHODS_PATH:
+        test_funcs_collection.current_nbr += 1
+        test_funcs_collection.print_current_nbr()
         display_convergence_2d(f'figure\\{path}',
-                               get_zvankin_quad(2),
-                               np.array([[-5], [-3]]),
-                               method)
+                               J, method, X0,
+                               np.linspace(-10, 10, 100),
+                               np.linspace(-10, 10, 100))
 
-@display_func_n(3)
-def display_all_converence_by_X0():
+@test_deco_n(func_collection, nbr_methods)
+def display_all_converence_by_X0(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_convergence_by_X0 for each method in METHODS_PATH.
     '''
+    J = get_zvankin_quad(2)
     for method, path in METHODS_PATH:
+        test_funcs_collection.current_nbr += 1
+        test_funcs_collection.print_current_nbr()
         display_convergence_by_X0(f'figure\\{path}',
-                                  get_zvankin_quad(2),
-                                  (-10, 10),
-                                  (-10, 10),
-                                  50, 5e-2, 10000,
-                                  method)
+                                  J, method,
+                                  np.linspace(-10, 10, 50),
+                                  np.linspace(-10, 10, 50))
 
-@display_func_n(3)
-def display_all_partial_func():
+@test_deco_n(func_collection, nbr_methods)
+def display_all_partial_func(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_partial_func for each method in METHODS_PATH.
     '''
+    J = get_zvankin_quad(2)
     for method, path in METHODS_PATH:
+        test_funcs_collection.current_nbr += 1
+        test_funcs_collection.print_current_nbr()
         display_partial_func(f'figure\\{path}\\partial_func',
-                             get_zvankin_quad(2),
-                             np.array([[-5], [-3]]),
-                             method)
+                             J, method, X0)
 
-@display_func_n(3)
-def display_all_norm():
+@test_deco_n(func_collection, nbr_methods)
+def display_all_norm(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_norm for each method in METHODS_PATH.
     '''
+    J = get_zvankin_quad(2)
     for method, path in METHODS_PATH:
+        test_funcs_collection.current_nbr += 1
+        test_funcs_collection.print_current_nbr()
         display_norm(f'figure\\{path}',
-                     get_zvankin_quad(2),
-                     np.array([[-5], [-3]]),
-                     method)
+                     J, method, X0)
 
-@display_func_n(3)
-def display_all_error():
+@test_deco_n(func_collection, nbr_methods)
+def display_all_error(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_error for each method in METHODS_PATH.
     '''
+    J = get_zvankin_quad(2)
+    x_solu = np.linalg.solve(J.A, J.b)
     for method, path in METHODS_PATH:
+        test_funcs_collection.current_nbr += 1
+        test_funcs_collection.print_current_nbr()
         display_error(f'figure\\{path}',
-                      get_zvankin_quad(2),
-                      np.array([[-5], [-3]]),
-                      method)
+                      J, method, X0,
+                      x_solu)
 
-@display_func_n(3)
-def display_all_compare_error():
+@test_deco_n(func_collection, 1)
+def display_all_compare_error(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_compare_error for each method in METHODS_LABELS.
     '''
-    display_compare_error(f'figure\\',
-                          get_zvankin_quad(2),
-                          np.array([[-5], [-3]]),
-                          METHODS_LABELS)
 
-@display_func_n(1)
-def display_ka_wrp():
+    methods_label = tuple((method, METHODS_LABEL[method]) for method, _ in METHODS_PATH)
+
+    J = get_zvankin_quad(2)
+    x_solu = np.linalg.solve(J.A, J.b)
+    test_funcs_collection.current_nbr += 1
+    test_funcs_collection.print_current_nbr()
+    display_compare_error(f'figure\\',
+                          J, methods_label, X0,
+                          x_solu)
+
+@test_deco_n(func_collection, 1)
+def display_ka_wrp(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_ka for the condition number of the matrix A.
     '''
+    test_funcs_collection.current_nbr += 1
+    test_funcs_collection.print_current_nbr()
     display_ka('figure\\condition_number.png', 500)
 
 
@@ -119,7 +138,7 @@ def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
     print("------------------------------------------")
     print("           unconditioned matrix           ")
     print("------------------------------------------\n")
-    X_gd = quadratic_gradient_descent(f, X0, eps, niter)
+    X_gd = quadratic_gradient_descent_optimal_step(f, X0, eps, niter)
     print(f'gradient descent method optimal step: {len(X_gd)} iterations')
     error = np.linalg.norm(f.df (X_gd[-1]))
     print(f'error: {error}\n')
@@ -134,7 +153,7 @@ def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
     print("------------------------------------------\n")
 
     quad = condi_A(f)
-    X_gd = quadratic_gradient_descent(quad, X0, eps, niter)
+    X_gd = quadratic_gradient_descent_optimal_step(quad, X0, eps, niter)
     print(f'gradient descent method optimal step: {len(X_gd)} iterations')
     error = np.linalg.norm(quad.df (X_gd[-1]))
     print(f'error: {error }\n')
@@ -146,12 +165,12 @@ def comparaison_condi(f : QuadraticFunction, X0, eps: float, niter: int):
 
 
 def main():
-    # paths = [path for _, path in METHODS_PATH]
-    # paths.extend([f"{path}\\partial_func" for _, path in METHODS_PATH])
-    # add_floders(tuple(paths))
+    paths = [path for _, path in METHODS_PATH]
+    paths.extend([f"{path}\\partial_func" for _, path in METHODS_PATH])
+    add_floders(tuple(paths))
 
-    # for func in display_func.funcs:
-    #     func()
+    for func in func_collection.funcs:
+        func()
 
     # compare a conditioned matrix and an unconditioned matrix for a quadratic function
     comparaison_condi(get_other_diago(1000), np.array([[0] for _ in range(1000)]), 1e-10, int(2e3))
