@@ -1,10 +1,11 @@
+from typing import Callable, Literal
 import numpy as np
 
 from matplotlib import pyplot as plt
 from matplotlib import contour as ctr
 
 from function import Function, get_other_diago, condi_A
-from opti_methods import METHODE_TYPE
+from opti_methods import METHOD_TYPE
 
 
 def plot_contour(f: Function, x_space: np.ndarray, y_space: np.ndarray, z_space: np.ndarray | None = None, norm = None):
@@ -31,7 +32,7 @@ def plot_contour(f: Function, x_space: np.ndarray, y_space: np.ndarray, z_space:
     plt.colorbar(contour, label='f(x, y)')
 
 
-def display_convergence_2d(path: str, J: Function, methode: METHODE_TYPE, X0: np.ndarray,
+def display_convergence_2d(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray,
                            x_space: np.ndarray, y_space: np.ndarray, z_space: np.ndarray | None = None,
                            eps: float = 5e-2, niter: int = 1000):
     '''
@@ -56,7 +57,7 @@ def display_convergence_2d(path: str, J: Function, methode: METHODE_TYPE, X0: np
     print(f'File saved at {path}\\convergence_grad_de.png')
 
 
-def display_convergence_by_X0(path: str, J: Function, methode: METHODE_TYPE,
+def display_convergence_by_X0(path: str, J: Function, methode: METHOD_TYPE,
                               x_space: np.ndarray, y_space: np.ndarray,
                               eps: float = 5e-2, niter: int = 1000):
     '''
@@ -86,7 +87,7 @@ def display_convergence_by_X0(path: str, J: Function, methode: METHODE_TYPE,
     print(f'File saved at {path}\\convergence_by_X0.png')
 
 
-def display_partial_func(path: str, J: Function, methode: METHODE_TYPE, X0: np.ndarray):
+def display_partial_func(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray):
     '''
     Display 10 partial functions of a function that are the cuts of the function along its gradient
     at 10 points of the gradient descent. Display also a single figure with all the cuts.
@@ -99,7 +100,7 @@ def display_partial_func(path: str, J: Function, methode: METHODE_TYPE, X0: np.n
     The function saves the figures at the path `path` and print a message to confirm the saving.
     '''
     Xn = methode(J, X0, 5e-2, 1000)
-    
+    nbr_iter = len(Xn)
     i_lnspace = np.linspace(1, len(Xn), 10, dtype=int, endpoint=False)
     Xn        = Xn[i_lnspace]
     grad      = [J.df(X) for X in Xn]
@@ -114,7 +115,6 @@ def display_partial_func(path: str, J: Function, methode: METHODE_TYPE, X0: np.n
     cmap = plt.get_cmap('Blues')
     
     plt.clf()
-    plt.title(f'Coupes de la fonction')
     cs = ctr.ContourSet(plt.gca(), i_lnspace, segs, cmap=cmap)
     # plt.clabel(cs, inline=True, fontsize=8, fmt=lambda x: f'i = {x:.2f}')
         # plt.contour(xn, xn, np.array([[J(np.array([[x], [y]])) for x in xn] for y in xn]), cmap=cmap, alpha=0.5)
@@ -125,20 +125,22 @@ def display_partial_func(path: str, J: Function, methode: METHODE_TYPE, X0: np.n
 
     for iy, i in enumerate(i_lnspace):
         plt.clf()
-        plt.title(f'Coupe de la fonction ({i+1}/{len(Xn) + 1})')
+        plt.title(f'Coupe de la fonction ({i}/{nbr_iter})')
         plt.plot(xn, yns[iy])
         plt.xlabel('t')
         plt.ylabel(r'$f(x_i - t\nabla f(x_i))$')
-        plt.savefig(f'{path}\\partial_funct({i+1}).png')
+        plt.savefig(f'{path}\\partial_funct({i}).png')
 
 
-def display_norm(path: str, J: Function, methode: METHODE_TYPE, X0: np.ndarray):
+def display_norm(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray,
+                 log_mod: Literal['semilogx', 'semilogy', 'loglog'] | None = None):
     '''
     Display the norm of the gradient of the function at each iteration of a gradient descent method with the following parameters:
     - `path: str` the path to save the figure
     - `J: Function` a function object that has the `df` method
     - `methode: METHODE_TYPE` the method to use
     - `X0: np.ndarray` the starting point of the method
+    - `log_mod: Literal['semilogx', 'semilogy', 'loglog'] | None` the log scale of the plot
 
     The function saves the figure at the path `path` and print a message to confirm the saving.
     '''
@@ -147,8 +149,14 @@ def display_norm(path: str, J: Function, methode: METHODE_TYPE, X0: np.ndarray):
     grad = [J.df(X) for X in Xn]
 
     plt.clf()
-    plt.title('Convergence de la solution')
-    plt.plot(np.arange(len(Xn)), [np.linalg.norm(grad_val) for grad_val in grad])
+    if log_mod is None:
+        plt.plot(np.arange(len(Xn)), [np.linalg.norm(grad_val) for grad_val in grad])
+    elif log_mod == 'semilogx':
+        plt.semilogx(np.arange(len(Xn)), [np.linalg.norm(grad_val) for grad_val in grad])
+    elif log_mod == 'semilogy':
+        plt.semilogy(np.arange(len(Xn)), [np.linalg.norm(grad_val) for grad_val in grad])
+    elif log_mod == 'loglog':
+        plt.loglog(np.arange(len(Xn)), [np.linalg.norm(grad_val) for grad_val in grad])
     plt.xlabel('Nombre d\'itérations $i$')
     plt.ylabel(r'$\|\nabla f(x_i)\|$')
     plt.xticks(np.linspace(0, len(Xn)-1, 10, dtype=int))
@@ -157,7 +165,7 @@ def display_norm(path: str, J: Function, methode: METHODE_TYPE, X0: np.ndarray):
     print(f'File saved at {path}\\convergence.png')
 
 
-def display_error(path: str, J: Function, methode: METHODE_TYPE, X0: np.ndarray, solution: np.ndarray):
+def display_error(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray, solution: np.ndarray):
     '''
     Display the error of the gradient descent method at each iteration with the following parameters:
     - `path: str` the path to save the figure
@@ -182,8 +190,37 @@ def display_error(path: str, J: Function, methode: METHODE_TYPE, X0: np.ndarray,
     print(f'File saved at {path}\\error.png')
 
 
+def display_compare_norm(path: str, J: Function,
+                         methodes_labels: tuple[tuple[METHOD_TYPE, str], ...],
+                         X0: np.ndarray):
+    '''
+    Display the norm of the gradient of severals gradient descent methods at each iteration with the following parameters:
+    - `path: str` the path to save the figure
+    - `J: Function` a function object that has the `df` method
+    - `methodes_labels: tuple[tuple[METHODE_TYPE, str], ...]` the methods to use with their labels
+    - `X0: np.ndarray` the starting point of the method
+
+    The function saves the figure at the path `path` and print a message to confirm the saving.
+    '''
+    plt.clf()
+    for methode, label in methodes_labels:
+        Xn = methode(J, X0, 5e-2, 1000)
+    
+        grad = [J.df(X) for X in Xn]
+
+        plt.loglog(np.arange(len(Xn)), [np.linalg.norm(grad_val) for grad_val in grad], label=label)
+    plt.legend()
+    plt.grid()
+    plt.xlabel('Nombre d\'itérations $i$')
+    plt.ylabel(r'$\|\nabla f(x_i)\|$')
+    plt.grid()
+
+    plt.savefig(f'{path}\\convergence.png')
+    print(f'File saved at {path}\\convergence.png')
+
+
 def display_compare_error(path: str, J: Function,
-                          methodes_labels: tuple[tuple[METHODE_TYPE, str], ...],
+                          methodes_labels: tuple[tuple[METHOD_TYPE, str], ...],
                           X0: np.ndarray, solution: np.ndarray):
     '''
     Display the error of severals gradient descent methods at each iteration with the following parameters:
@@ -233,3 +270,28 @@ def display_ka(path: str, nmax: int):
     plt.savefig(path)
     print(f'File saved at {path}')
 
+
+def display_time_N(path: str, J_gen: Callable[[int], Function], methode: METHOD_TYPE, 
+                   ):
+    """
+    Display the time taken to compute the gradient descent method for a function of size n.
+    The function takes the following parameters:
+    - `path: str` the path to save the figure
+    - `J_gen: Callable[[int], Function]` a function that generate a function of size n
+    - `methode: METHODE_TYPE` the method to use
+    - `nmax: int` the maximum size of the matrix A
+
+    The function saves the figure at the path `path` and print a message to confirm the saving.
+    """
+    time = []
+    for i in range(1, nmax):
+        J = J_gen(i)
+        X0 = np.array([[0] for _ in range(i)])
+        time.append(methode(J, X0, 5e-2, 1000)[1])
+
+    plt.clf()
+    plt.title('Time taken to compute the gradient descent method')
+    plt.plot(range(1, nmax), time)
+    plt.grid()
+    plt.savefig(path)
+    print(f'File saved at {path}'

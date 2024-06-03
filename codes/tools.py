@@ -1,23 +1,42 @@
 from __future__ import annotations
 import os
 import shutil
+import time
 from typing import Callable, Concatenate
 
 
 
+FOLDER_ALREADY_INIT = False
 
+
+
+def init_figure_folder():
+    """
+    Create a new folder 'figure' if they don't already exist, else delets and recreats it.
+    If the folder is already initialized, it does nothing.
+    """
+    global FOLDER_ALREADY_INIT
+
+    if os.path.exists('figure') and not FOLDER_ALREADY_INIT:
+        shutil.rmtree('figure')
+        FOLDER_ALREADY_INIT = True
+    else:
+        print('The folder is already initialized.')
 
 def add_floders(floders: tuple[str, ...]):
     """
-    Create a new folder 'figure' and subfolders 'grad_desc_fix_step' and 'grad_desc_optimal_step'
-    if they already exist, they are deleted and recreated.
+    Add subfolders to the 'figure' folder. 
     """
-    if os.path.exists('figure'):
-        shutil.rmtree('figure')
-
     os.makedirs('figure')
     for floder in floders:
         os.makedirs(f'figure\\{floder}')
+
+def format_path(label: str) -> str:
+    """
+    Format the path to the figure by adding the 'figure' folder.
+    """
+    path = label.lower().replace(' ', '_')
+    return path
 
 
 class TestFuncsCollection:
@@ -63,3 +82,14 @@ def test_deco_n(test_funcs_collection: TestFuncsCollection, n: int):
         '''
         return test_funcs_collection(func, n)
     return decorator
+
+def time_func[**P, R](func: Callable[P, R]) -> Callable[P, tuple[float, R]]:
+    '''
+    Return the time taken to execute the function.
+    '''
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> tuple[float, R]:
+        start = time.time()
+        res = func(*args, **kwargs)
+        end = time.time()
+        return end - start, res
+    return wrapper

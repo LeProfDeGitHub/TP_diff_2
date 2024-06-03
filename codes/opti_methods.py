@@ -1,13 +1,11 @@
 from typing import Callable
 import numpy as np
+from tools import format_path
 from function import Function
 
 
-METHODE_TYPE = Callable[[Function,
-                         np.ndarray,
-                         float,
-                         int],
-                         np.ndarray]
+METHOD_TYPE = Callable[[Function, np.ndarray, float, int],
+                        np.ndarray]
 
 
 def gradient_descent_fix_step(f: Function, X0: np.ndarray, eps: float, niter: int, alpha: float = 1e-2):
@@ -177,12 +175,14 @@ def BFGS(f: Function, x0: np.ndarray, eps: float, n: int):
     return X
 
 
-METHODS_LABEL: dict[METHODE_TYPE, str] = {
+__METHODS_LABEL: dict[METHOD_TYPE, str] = {
     gradient_descent_fix_step              : 'Gradient Descent Fixed Step',
-    quadratic_gradient_descent_optimal_step: 'Gradient Descent Optimal Step',
+    quadratic_gradient_descent_optimal_step: 'Quadratic Gradient Descent Optimal Step',
     quadratic_conjuguate_gradient_method   : 'Conjuguate Gradient',
     newton                                 : 'Newton',
     gradient_descent_optimal_step          : 'Gradient Descent Optimal Step',
     newton_optimal_step                    : 'Newton Optimal Step',
     BFGS                                   : 'BFGS',
 }
+
+METHODS_LABEL_PATH: dict[METHOD_TYPE, tuple[str, str]] = {method: (label, format_path(label)) for method, label in __METHODS_LABEL.items()}

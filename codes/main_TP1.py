@@ -7,12 +7,13 @@ from display import (display_convergence_2d,
                      display_error,
                      display_compare_error,
                      display_ka)
-from opti_methods import (METHODE_TYPE,
-                          METHODS_LABEL,
-                          gradient_descent_fix_step,
+from opti_methods import (METHOD_TYPE,
+                          METHODS_LABEL_PATH,
+                          gradient_descent_fix_step, newton, newton_optimal_step, gradient_descent_optimal_step,
                           quadratic_gradient_descent_optimal_step,
                           quadratic_conjuguate_gradient_method,)
-from tools import (add_floders,
+from tools import (init_figure_folder,
+                   add_floders,
                    TestFuncsCollection,
                    test_deco_n,)
 
@@ -60,16 +61,19 @@ def comparaison_condi(f: QuadraticFunction, X0, eps: float, niter: int):
 
 
 
-METHODS_PATH: tuple[tuple[METHODE_TYPE, str], ...] = (
-    (gradient_descent_fix_step              , 'grad_desc_fix_step'    ),
-    (quadratic_gradient_descent_optimal_step, 'grad_desc_optimal_step'),
-    (quadratic_conjuguate_gradient_method   , 'conjuguate_gradient'   ),
+METHODS: tuple[METHOD_TYPE, ...] = (
+    gradient_descent_fix_step,
+    quadratic_gradient_descent_optimal_step,
+    quadratic_conjuguate_gradient_method,
+    newton,
+    newton_optimal_step,
+    gradient_descent_optimal_step,
 )
 
 # Objects to store the functions to be executed.
 func_collection = TestFuncsCollection("TP1")
 
-nbr_methods = len(METHODS_PATH)
+nbr_methods = len(METHODS)
 
 X0 = np.array([[-5], [1]])
 
@@ -79,7 +83,8 @@ def display_all_converence_2d(test_funcs_collection: TestFuncsCollection):
     Call display_convergence_2d for each method in METHODS_PATH.
     '''
     J = get_zvankin_quad(2)
-    for method, path in METHODS_PATH:
+    for method in METHODS:
+        _, path = METHODS_LABEL_PATH[method]
         test_funcs_collection.current_nbr += 1
         test_funcs_collection.print_current_nbr()
         display_convergence_2d(f'figure\\{path}',
@@ -93,7 +98,8 @@ def display_all_converence_by_X0(test_funcs_collection: TestFuncsCollection):
     Call display_convergence_by_X0 for each method in METHODS_PATH.
     '''
     J = get_zvankin_quad(2)
-    for method, path in METHODS_PATH:
+    for method in METHODS:
+        _, path = METHODS_LABEL_PATH[method]
         test_funcs_collection.current_nbr += 1
         test_funcs_collection.print_current_nbr()
         display_convergence_by_X0(f'figure\\{path}',
@@ -107,7 +113,8 @@ def display_all_partial_func(test_funcs_collection: TestFuncsCollection):
     Call display_partial_func for each method in METHODS_PATH.
     '''
     J = get_zvankin_quad(2)
-    for method, path in METHODS_PATH:
+    for method in METHODS:
+        _, path = METHODS_LABEL_PATH[method]
         test_funcs_collection.current_nbr += 1
         test_funcs_collection.print_current_nbr()
         display_partial_func(f'figure\\{path}\\partial_func',
@@ -119,7 +126,8 @@ def display_all_norm(test_funcs_collection: TestFuncsCollection):
     Call display_norm for each method in METHODS_PATH.
     '''
     J = get_zvankin_quad(2)
-    for method, path in METHODS_PATH:
+    for method in METHODS:
+        _, path = METHODS_LABEL_PATH[method]
         test_funcs_collection.current_nbr += 1
         test_funcs_collection.print_current_nbr()
         display_norm(f'figure\\{path}',
@@ -132,7 +140,8 @@ def display_all_error(test_funcs_collection: TestFuncsCollection):
     '''
     J = get_zvankin_quad(2)
     x_solu = np.linalg.solve(J.A, J.b)
-    for method, path in METHODS_PATH:
+    for method in METHODS:
+        _, path = METHODS_LABEL_PATH[method]
         test_funcs_collection.current_nbr += 1
         test_funcs_collection.print_current_nbr()
         display_error(f'figure\\{path}',
@@ -145,7 +154,7 @@ def display_all_compare_error(test_funcs_collection: TestFuncsCollection):
     Call display_compare_error for each method in METHODS_LABELS.
     '''
 
-    methods_label = tuple((method, METHODS_LABEL[method]) for method, _ in METHODS_PATH)
+    methods_label = tuple((method, METHODS_LABEL_PATH[method][0]) for method in METHODS)
 
     J = get_zvankin_quad(2)
     x_solu = np.linalg.solve(J.A, J.b)
@@ -171,12 +180,14 @@ def comparaison_condi_wrp(test_funcs_collection: TestFuncsCollection):
     """
     test_funcs_collection.current_nbr += 1
     test_funcs_collection.print_current_nbr()
+    print()
     comparaison_condi(get_other_diago(1000), np.array([[0] for _ in range(1000)]), 1e-10, int(2e3))
 
 
 def main():
-    paths = [path for _, path in METHODS_PATH]
-    paths.extend([f"{path}\\partial_func" for _, path in METHODS_PATH])
+    init_figure_folder()
+    paths = [METHODS_LABEL_PATH[method][1] for method in METHODS]
+    paths.extend([f"{path}\\partial_func" for path in paths])
     add_floders(tuple(paths))
 
     for func in func_collection.funcs:
