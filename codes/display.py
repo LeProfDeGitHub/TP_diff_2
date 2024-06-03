@@ -4,6 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import contour as ctr
 
+from tools import time_func
 from function import Function, get_other_diago, condi_A
 from opti_methods import METHOD_TYPE
 
@@ -272,26 +273,29 @@ def display_ka(path: str, nmax: int):
 
 
 def display_time_N(path: str, J_gen: Callable[[int], Function], methode: METHOD_TYPE, 
-                   ):
+                   n_space: np.ndarray):
     """
     Display the time taken to compute the gradient descent method for a function of size n.
     The function takes the following parameters:
     - `path: str` the path to save the figure
     - `J_gen: Callable[[int], Function]` a function that generate a function of size n
     - `methode: METHODE_TYPE` the method to use
-    - `nmax: int` the maximum size of the matrix A
+    - `n_space: np.ndarray` the values of n
 
     The function saves the figure at the path `path` and print a message to confirm the saving.
     """
     time = []
-    for i in range(1, nmax):
+    for i in n_space:
+        print(i)
         J = J_gen(i)
         X0 = np.array([[0] for _ in range(i)])
-        time.append(methode(J, X0, 5e-2, 1000)[1])
+        timed_methode = time_func(methode)
+        t, _ = timed_methode(J, X0, 5e-2, 1000)
+        time.append(t)
 
     plt.clf()
     plt.title('Time taken to compute the gradient descent method')
-    plt.plot(range(1, nmax), time)
+    plt.plot(n_space, time)
     plt.grid()
     plt.savefig(path)
-    print(f'File saved at {path}'
+    print(f'File saved at {path}')

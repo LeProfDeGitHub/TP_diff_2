@@ -111,6 +111,11 @@ def get_J_2(n: int):
     return Function(func, grad, hessian)
 
 
+def gen_J_1(n: int):
+    A = np.random.randn(n, n)
+    b = np.array([[-0.1] for _ in range(n)])
+    return get_J_1(A, b)
+
 
 
 
