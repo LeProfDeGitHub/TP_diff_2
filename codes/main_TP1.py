@@ -11,7 +11,7 @@ from opti_methods import (METHOD_TYPE,
                           METHODS_LABEL_PATH,
                           gradient_descent_fix_step, newton, newton_optimal_step, gradient_descent_optimal_step,
                           quadratic_gradient_descent_optimal_step,
-                          quadratic_conjuguate_gradient_method,)
+                          quadratic_conjuguate_gradient,)
 from tools import (init_figure_folder,
                    add_floders,
                    TestFuncsCollection,
@@ -38,7 +38,7 @@ def comparaison_condi(f: QuadraticFunction, X0, eps: float, niter: int):
     error = np.linalg.norm(f.df (X_gd[-1]))
     print(f'error: {error}\n')
 
-    X_cg = quadratic_conjuguate_gradient_method(f, X0, eps, niter)
+    X_cg = quadratic_conjuguate_gradient(f, X0, eps, niter)
     print(f'conjuguate gradient method: {len(X_cg)} iterations')
     error = np.linalg.norm(f.df (X_cg[-1]))
     print(f'error: {error }\n')
@@ -53,7 +53,7 @@ def comparaison_condi(f: QuadraticFunction, X0, eps: float, niter: int):
     error = np.linalg.norm(quad.df (X_gd[-1]))
     print(f'error: {error }\n')
 
-    X_cg = quadratic_conjuguate_gradient_method(quad, X0, eps, niter)
+    X_cg = quadratic_conjuguate_gradient(quad, X0, eps, niter)
     print(f'conjuguate gradient method: {len(X_cg)} iterations')
     error = np.linalg.norm(quad.df (X_cg[-1]))
     print(f'error: {error}\n')
@@ -64,7 +64,7 @@ def comparaison_condi(f: QuadraticFunction, X0, eps: float, niter: int):
 METHODS: tuple[METHOD_TYPE, ...] = (
     gradient_descent_fix_step,
     quadratic_gradient_descent_optimal_step,
-    quadratic_conjuguate_gradient_method,
+    quadratic_conjuguate_gradient,
     newton,
     newton_optimal_step,
     gradient_descent_optimal_step,

@@ -9,7 +9,9 @@ from function import (get_J_1,
 from opti_methods import (METHODS_LABEL_PATH, gradient_descent_fix_step,
                           gradient_descent_optimal_step,
                           newton,
-                          newton_optimal_step,)
+                          newton_optimal_step,
+                          BFGS,
+                          DFP,)
 from display import (display_convergence_by_X0,
                      display_norm,
                      display_compare_norm,
@@ -21,6 +23,8 @@ METHODS = (
     gradient_descent_optimal_step,
     newton,
     newton_optimal_step,
+    BFGS,
+    DFP,
 )
 
 # Objects to store the functions to be executed.
@@ -38,7 +42,7 @@ X0 = np.array([[-5], [1]])
 # z = J(Xn[-1])
 
 
-# @test_deco_n(func_collection, nbr_methods)
+@test_deco_n(func_collection, nbr_methods)
 def display_all_convergence_by_X0(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_convergence_by_X0 for each method in METHODS_PATH.
@@ -56,7 +60,7 @@ def display_all_convergence_by_X0(test_funcs_collection: TestFuncsCollection):
                                   np.linspace(-10, 10, 10),
                                   eps = 0.1)
 
-# @test_deco_n(func_collection, nbr_methods)
+@test_deco_n(func_collection, nbr_methods)
 def display_all_norm(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_norm for each method in METHODS_PATH.
@@ -72,7 +76,7 @@ def display_all_norm(test_funcs_collection: TestFuncsCollection):
                       J, method,
                       X0)
 
-# @test_deco_n(func_collection, 1)
+@test_deco_n(func_collection, 1)
 def display_all_compare_norm(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_compare_norm for each method in METHODS_PATH.

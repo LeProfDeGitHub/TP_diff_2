@@ -23,7 +23,7 @@ def grad(image_np) -> tuple[np.ndarray, np.ndarray]:
     
     return gx, gy
 
-def retourner_image(u):
+def grad_norm(u):
     """
     Retourne une image N qui correspond à la norme du gradient de l'image u. 
     :param Im: Image à traiter
@@ -37,36 +37,40 @@ def retourner_image(u):
 
     return imgrad_np
 
-def div(p):
-    """
-    Calcule la divergence d'un champ de vecteurs p = (p1, p2) de dimension (m, n).
+# def div(p):
+#     """
+#     Calcule la divergence d'un champ de vecteurs p = (p1, p2) de dimension (m, n).
     
-    Arguments:
-    p -- tuple (p1, p2), où p1 et p2 sont des arrays numpy de dimension (m, n)
+#     Arguments:
+#     p -- tuple (p1, p2), où p1 et p2 sont des arrays numpy de dimension (m, n)
     
-    Retourne:
-    divergence -- array numpy de dimension (m, n)
-    """
-    p1, p2 = p
-    print(p1.shape, p2.shape)
-    m, n = p1.shape
+#     Retourne:
+#     divergence -- array numpy de dimension (m, n)
+#     """
+#     p1, p2 = p
+#     print(p1.shape, p2.shape)
+#     m, n = p1.shape
     
-    # Calcul de ∂*x p1
-    D_partielle_x_p1 = np.zeros((m, n))
-    D_partielle_x_p1[0, :] = p1[0, :]
-    D_partielle_x_p1[1:m-1, :] = p1[1:m-1, :] - p1[0:m-2, :]
-    D_partielle_x_p1[m-1, :] = -p1[m-2, :]
+#     # Calcul de ∂*x p1
+#     D_partielle_x_p1 = np.zeros((m, n))
+#     D_partielle_x_p1[0, :] = p1[0, :]
+#     D_partielle_x_p1[1:m-1, :] = p1[1:m-1, :] - p1[0:m-2, :]
+#     D_partielle_x_p1[m-1, :] = -p1[m-2, :]
     
-    # Calcul de ∂*y p2
-    D_partielle_y_p2 = np.zeros((m, n))
-    D_partielle_y_p2[:, 0] = p2[:, 0]
-    D_partielle_y_p2[:, 1:n-1] = p2[:, 1:n-1] - p2[:, 0:n-2]
-    D_partielle_y_p2[:, n-1] = -p2[:, n-2]
+#     # Calcul de ∂*y p2
+#     D_partielle_y_p2 = np.zeros((m, n))
+#     D_partielle_y_p2[:, 0] = p2[:, 0]
+#     D_partielle_y_p2[:, 1:n-1] = p2[:, 1:n-1] - p2[:, 0:n-2]
+#     D_partielle_y_p2[:, n-1] = -p2[:, n-2]
     
-    # Calcul de la divergence
-    divergence = D_partielle_x_p1 + D_partielle_y_p2
+#     # Calcul de la divergence
+#     divergence = D_partielle_x_p1 + D_partielle_y_p2
     
-    return divergence
+#     return divergence
+
+def div(image_np):
+    u, v = grad(image_np)
+    return u + v
 
 def test_div_grad(u,v) :
     """
@@ -98,4 +102,9 @@ def add_noise(image_np, sigma):
     return image_noisy
 
 
-    
+
+
+
+
+
+

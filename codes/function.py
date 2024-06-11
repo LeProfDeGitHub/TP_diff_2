@@ -7,15 +7,6 @@ class Function:
         self.df = df
         self.ddf = ddf
 
-    def f(self, X):
-        return self.f(X)
-
-    def df(self, X):
-        return self.df(X)
-
-    def ddf(self, X):
-        return self.ddf(X)
-
     def __call__(self, X):
         return self.f(X)
 
