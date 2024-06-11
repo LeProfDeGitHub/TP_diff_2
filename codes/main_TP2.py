@@ -10,8 +10,9 @@ from opti_methods import (METHODS_LABEL_PATH, gradient_descent_fix_step,
                           gradient_descent_optimal_step,
                           newton,
                           newton_optimal_step,
-                          BFGS,
-                          DFP,)
+                          quasi_newton,
+                          quasi_newton_BFGS,
+                          quasi_newton_DFP)
 from display import (display_convergence_by_X0,
                      display_norm,
                      display_compare_norm,
@@ -19,12 +20,13 @@ from display import (display_convergence_by_X0,
 
 
 METHODS = (
+    quasi_newton_BFGS,
+    quasi_newton_DFP,
     gradient_descent_fix_step,
     gradient_descent_optimal_step,
     newton,
     newton_optimal_step,
-    BFGS,
-    DFP,
+
 )
 
 # Objects to store the functions to be executed.
@@ -76,7 +78,7 @@ def display_all_norm(test_funcs_collection: TestFuncsCollection):
                       J, method,
                       X0)
 
-@test_deco_n(func_collection, 1)
+@test_deco_n(func_collection, nbr_methods)
 def display_all_compare_norm(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_compare_norm for each method in METHODS_PATH.

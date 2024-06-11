@@ -119,6 +119,7 @@ def display_partial_func(path: str, J: Function, methode: METHOD_TYPE, X0: np.nd
     yns = np.array([[J.partial(X, d)(x)[0, 0] for x in xn]
                     for X, d in zip(Xn, grad_norm)])
 
+
     segs = [[[[x, y] for x, y in zip(xn, yn)]] for yn in yns]
 
     cmap = plt.get_cmap('Blues')
@@ -339,8 +340,8 @@ def display_phi(s, alphas):
     plt.legend()
     plt.show()
 
-def estimate_u(v, lambda_):
-    # res = minimize(X, v, args=(v, lambda_, alpha), method='CG', jac=grad_J, options={'maxiter': niter})
+def estimate_u(img_np, lambda_):
+    # res = minimize(X, img_np, args=(img_np, lambda_), method='CG', jac=grad_J, options={'maxiter': niter})
     # return res.x
     pass
 
