@@ -4,6 +4,7 @@ from display import (display_convergence_2d,
                      display_convergence_by_X0,
                      display_partial_func,
                      display_norm,
+                     display_error_N,
                      display_error,
                      display_compare_error,
                      display_ka)
@@ -107,7 +108,7 @@ def display_all_converence_by_X0(test_funcs_collection: TestFuncsCollection):
                                   np.linspace(-10, 10, 50),
                                   np.linspace(-10, 10, 50))
 
-@test_deco_n(func_collection, nbr_methods)
+# @test_deco_n(func_collection, nbr_methods)
 def display_all_partial_func(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_partial_func for each method in METHODS_PATH.
@@ -130,23 +131,33 @@ def display_all_norm(test_funcs_collection: TestFuncsCollection):
         _, path = METHODS_LABEL_PATH[method]
         test_funcs_collection.current_nbr += 1
         test_funcs_collection.print_current_nbr()
-        display_norm(f'figure\\{path}',
-                     J, method, X0)
+        display_norm(f'figure\\{path}', J, method, X0)
+
+@test_deco_n(func_collection, nbr_methods)
+def display_all_norm_N(test_funcs_collection: TestFuncsCollection):
+    '''
+    Call display_norm for each method in METHODS_PATH.
+    '''
+    for method in METHODS:
+        _, path = METHODS_LABEL_PATH[method]
+        test_funcs_collection.current_nbr += 1
+        test_funcs_collection.print_current_nbr()
+        display_error_N(f'figure\\{path}', get_zvankin_quad, method, np.linspace(1, 50, 10, dtype=int))
 
 # @test_deco_n(func_collection, nbr_methods)
 def display_all_error(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_error for each method in METHODS_PATH.
     '''
-    J = get_zvankin_quad(2)
+    n = 2
+    J = get_zvankin_quad(n)
+    X0 = np.array([[1] for _ in range(n)])
     x_solu = np.linalg.solve(J.A, J.b)
     for method in METHODS:
         _, path = METHODS_LABEL_PATH[method]
         test_funcs_collection.current_nbr += 1
         test_funcs_collection.print_current_nbr()
-        display_error(f'figure\\{path}',
-                      J, method, X0,
-                      x_solu)
+        display_error(f'figure\\{path}', J, method, X0, x_solu)
 
 # @test_deco_n(func_collection, 1)
 def display_all_compare_error(test_funcs_collection: TestFuncsCollection):

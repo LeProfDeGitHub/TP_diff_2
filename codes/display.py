@@ -4,10 +4,7 @@ import numpy as np
 from matplotlib import cm
 from matplotlib import pyplot as plt
 from matplotlib import contour as ctr
-from matplotlib.colors import Normalize
-
-
-
+from matplotlib.colors import Normalize, LogNorm
 
 from tools import time_func
 from function import (Function,
@@ -59,9 +56,15 @@ def display_convergence_2d(path: str, J: Function, methode: METHOD_TYPE, X0: np.
     The function saves the figure at the path `path` and print a message to confirm the saving.
     '''
     Xn = methode(J, X0, eps, niter)
+    grad = [J.df(X) for X in Xn]
+    norm_grad = [grad_val/np.linalg.norm(grad_val) for grad_val in grad]
     
     plot_contour(J, x_space, y_space, z_space)
     plt.plot(Xn[:, 0], Xn[:, 1], 'r*--', label='Gradient Descente')
+
+    for X, grad_val in zip(Xn, norm_grad):
+        plt.arrow(X[0, 0], X[1, 0], grad_val[0, 0], grad_val[1, 0], head_width=0.5, head_length=0.5, fc='k', ec='k')
+
     plt.savefig(f'{path}\\convergence_grad_de.png')
     print(f'File saved at {path}\\convergence_grad_de.png')
 
@@ -202,6 +205,56 @@ def display_error(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray, 
     print(f'File saved at {path}\\error.png')
 
 
+def display_error_N(path: str, J_gen: Callable[[int], Function], methode: METHOD_TYPE, n_space: np.ndarray):
+    '''
+    Display the error of the gradient descent method at each iteration for functions of different sizes with the following parameters:
+    - `path: str` the path to save the figure
+    - `J_gen: Callable[[int], Function]` a function that generate a function of size n
+    - `methode: METHODE_TYPE` the method to use
+    - `n_space: np.ndarray` the values of n
+
+    The function saves the figure at the path `path` and print a message to confirm the saving.
+    '''
+    plt.clf()
+
+    N_iter = np.zeros((len(n_space), 1))
+
+    for i, N in enumerate(n_space):
+        J = J_gen(N)
+        X0 = np.array([[5] for _ in range(N)])
+        Xn = methode(J, X0, 5e-2, 20_000)
+        err = np.array([np.linalg.norm(x) for x in Xn])
+
+        _, m = N_iter.shape
+        new_N_iter = np.zeros((len(n_space), max(m, len(Xn))))
+        new_N_iter[:, :] = 10e-10
+        new_N_iter[:, :m] = N_iter
+        N_iter = new_N_iter
+
+        N_iter[i, :len(err)] = err[::-1]
+
+    N_iter = N_iter[::-1, :]
+
+    err_max = np.nanmax(N_iter)
+    err_min = np.nanmin(N_iter)
+
+    norm = LogNorm(vmin=10e-10, vmax=float(err_max))
+
+    plt.imshow(N_iter, aspect='auto', norm=norm)
+    plt.colorbar(label=r'$\log{\|x_i\|}$')
+    plt.xlabel('Nombre d\'itérations $i$')
+    plt.ylabel('Taille de la fonction $N$')
+    plt.xticks(np.linspace(0, N_iter.shape[1]-1, 10, dtype=int), rotation=45)
+    plt.yticks(np.arange(len(n_space)), [str(n) for n in n_space[::-1]])
+    # plt.grid()
+    plt.savefig(f'{path}\\error_N.png')
+    print(f'File saved at {path}\\error_N.png')
+    
+
+
+        
+
+
 def display_compare_norm(path: str, J: Function,
                          methodes_labels: tuple[tuple[METHOD_TYPE, str], ...],
                          X0: np.ndarray):
@@ -254,7 +307,7 @@ def display_compare_error(path: str, J: Function,
     plt.legend()
     plt.grid()
     plt.xlabel('Nombre d\'itérations $i$')
-    plt.ylabel(r'\|x_i-x^*\|')
+    plt.ylabel(r'$\|x_i-x^*\|$')
     plt.grid()
     plt.savefig(f'{path}\\error.png')
     print(f'File saved at {path}\\error.png')
@@ -308,17 +361,16 @@ def display_time_N(path: str, J_gen: Callable[[int], Function], methode: METHOD_
     plt.title('Time taken to compute the gradient descent method')
     plt.plot(n_space, time)
     plt.grid()
-    plt.savefig(path)
-    print(f'File saved at {path}')
+    plt.savefig(f'{path}\\time_N.png')
+    print(f'File saved at {path}\\time_N.png')
 
 
-def display_phi(s, alphas):
+def display_phi(path: str, s, alphas):
 
     cmap = cm.get_cmap('Blues', len(alphas))  
 
     i_colors = np.linspace(0, 1, len(alphas))[::-1]
-    i_max = len(alphas) - 1
-    i_mean = len(alphas) // 2
+    i_mean = (len(alphas) - 1) // 2
 
     plt.clf()
     for i, (alpha, i_color) in enumerate(zip(alphas, i_colors)):
@@ -338,7 +390,9 @@ def display_phi(s, alphas):
     plt.xlabel('s')
     plt.ylabel(r'$\phi(s, \alpha)$')
     plt.legend()
-    plt.show()
+    plt.savefig(f'{path}\\phi.png')
+    print(f'File saved at {path}\\phi.png')
+
 
 def estimate_u(img_np, lambda_):
     # res = minimize(X, img_np, args=(img_np, lambda_), method='CG', jac=grad_J, options={'maxiter': niter})
@@ -359,3 +413,4 @@ def display_error_lambda(img_np, estimate_u):
     plt.ylabel('MSE')
     plt.title('MSE between original and estimated image vs lambda')
     plt.show()
+

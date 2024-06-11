@@ -20,6 +20,7 @@ from opti_methods import (METHOD_TYPE,
 from display import display_phi
 
 
+
 METHODS: tuple[METHOD_TYPE, ...] = (
     gradient_descent_fix_step,
     quadratic_gradient_descent_optimal_step,
@@ -27,7 +28,7 @@ METHODS: tuple[METHOD_TYPE, ...] = (
     newton,
     newton_optimal_step,
     gradient_descent_optimal_step,
-    )
+)
 
 
 def test_hist(img):
@@ -98,6 +99,7 @@ def get_J_image_func(v, lmbd: float):
         return (1/2) * np.linalg.norm(v - u)**2 + (lmbd/2) * grad_norm(u)**2
     
     def df(u):
+        
         return u - v - lmbd * div(grad(u))
 
     def ddf(u):
@@ -113,90 +115,82 @@ def test_methods(methods: tuple[METHOD_TYPE, ...], img_np: np.ndarray):
     lmbd = 0.1
 
     # Initialize u
-    u = np.zeros_like(img_np)
+    u = add_noise(img_np, 10)
     
     # Get the J function
     J = get_J_image_func(img_np, lmbd)
 
-    # Plot the results
+    # # Plot the results
+    # img_J_np = J(img_np)
     
-    plt.imshow(img_np)
-    plt.title('Original image')
-    plt.axis('off')
-    plt.show()
-
-    for method in methods:
-
-        # Initialize u
-        u = np.zeros_like(img_np)
-
-        # Initialize list to store the values of J(u)
-        J_values = []
-
-        for i in range(niter):
-        
-            # Update u
-            us = method(J, u, eps, 1000)
-            u_min = us[-1]
-
-            img = PIL.Image.fromarray(u_min.astype(np.uint8))
-            img.save(f"figure/{METHODS_LABEL_PATH[method][1]}.png")
-
     
-def test_plot_objective(img):
-    eps = 1e-6
-    niter = 100
-    lmbd = 0.1
+    # img_J = PIL.Image.fromarray(img_J_np.astype(np.uint8))
+    # img_J.show()
 
-    # Initialize u
-    u = np.zeros_like(img)
-
-    # Initialize list to store the values of J(u)
-    J_values = []
-
-    # Get the J function
-    J = get_J_image_func(img, lmbd)
-
-    for i in range(niter):
-        # Calculate the value of J(u)
-        J_u = J.f(u)
-
-        # Save the value of J(u)
-        J_values.append(J_u)
-
+    for method in methods:        
         # Update u
-        u = u - eps * J.df(u)
+        us = method(J, u, eps, 1000)
+        u_min = us[-1]
 
-    # Plot the evolution of J(u)
-    plt.plot(J_values)
-    plt.xlabel('Iteration')
-    plt.ylabel('J(u)')
-    plt.title('Evolution of the objective function J(u)')
-    plt.show()
+        img = PIL.Image.fromarray(u_min.astype(np.uint8))
+        img.save(f"figure/{METHODS_LABEL_PATH[method][1]}.png")
+
+    
+# def test_plot_objective(img):
+#     eps = 1e-6
+#     niter = 100
+#     lmbd = 0.1
+
+#     # Initialize u
+#     u = get_noi
+
+#     # Initialize list to store the values of J(u)
+#     J_values = []
+
+#     # Get the J function
+#     J = get_J_image_func(img, lmbd)
+
+#     for i in range(niter):
+#         # Calculate the value of J(u)
+#         J_u = J.f(u)
+
+#         # Save the value of J(u)
+#         J_values.append(J_u)
+
+#         # Update u
+#         u = u - eps * J.df(u)
+
+#     # Plot the evolution of J(u)
+#     plt.plot(J_values)
+#     plt.xlabel('Iteration')
+#     plt.ylabel('J(u)')
+#     plt.title('Evolution of the objective function J(u)')
+#     plt.show()
 
 
 
 def main():
+    
     path = 'Images'
     img = PIL.Image.open(f"{path}/lena.png")
+    img_np = np.array(img)
     # test_hist(img)
     # test_div(img)
-    test_div_grad(np.array([[1, 2, 3], [4, 5, 6]]), np.array([[7, 8, 9], [10, 11, 12]]))
+    # test_div_grad(np.array([[1, 2, 3], [4, 5, 6]]), np.array([[7, 8, 9], [10, 11, 12]]))
     # test_plot_objective(np.array(img))
-    # test_methods((quadratic_conjuguate_gradient,), np.array(img))
+    test_methods((quadratic_conjuguate_gradient,), img_np)
 
 
 def test_computePhi():
     s = np.linspace(-2, 2, 400) # On pourra changer les valeurs de s pour voir l'effet sur la fonction Phi
-    # alphas = [0.01, 0.25, 0.5, 1, 1.25, 1.5, 2] # feur
     alphas = np.linspace(0.01, 2, 100)
-    display_phi(s, alphas)
+    display_phi('figure', s, alphas)
     plt.show()
 
 
 if __name__ == '__main__':
-    test_computePhi()
-    # main()
+    # test_computePhi()
+    main()
   
     
     

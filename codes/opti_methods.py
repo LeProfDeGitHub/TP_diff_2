@@ -205,3 +205,4 @@ __METHODS_LABEL: dict[METHOD_TYPE, str] = {
 }
 
 METHODS_LABEL_PATH: dict[METHOD_TYPE, tuple[str, str]] = {method: (label, format_path(label)) for method, label in __METHODS_LABEL.items()}
+
