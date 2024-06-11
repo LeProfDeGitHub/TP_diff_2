@@ -2,6 +2,7 @@ from typing import Callable
 import numpy as np
 from tools import format_path
 from function import Function
+import scipy
 
 
 METHOD_TYPE = Callable[[Function, np.ndarray, float, int],
@@ -150,80 +151,57 @@ def newton_optimal_step(f: Function, X0: np.ndarray, eps: float, niter: int):
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
     return X
 
-def BFGS(f: Function, x0: np.ndarray, eps: float, n: int):
-    """
-    Find the minimum of a function using the BFGS method with the following parameters :
-    - `f: Function` a function object that has gradient method (`J.df`)
-    - `x0: np.ndarray` the starting point of the method
-    - `eps: float` the maximum error allowed
-    - `n: int` the maximum number of iterations allowed
 
-    The function returns an array of points `X: np.ndarray` which are the points of the path to the minimum
-    and the last element of the array is the minimum of the function.
-    """
-    X = np.array([x0])
-    B = np.eye(len(x0))
-    while np.linalg.norm(f.df(X[-1])) > eps and len(X) < n :
-        d = - B @ f.df(X[-1])
-        alpha = BFGS(f.partial(X[-1], d), np.array([[0]]), eps, n)[0]
-        alpha = alpha[-1]
-        x = X[-1] + alpha * d
-        s = x - X[-1]
-        y = f.df(x) - f.df(X[-1])
-        B = B + (y @ y.T)/(y.T @ s) - (B @ s @ s.T @ B)/(s.T @ B @ s)
-        X = np.append(X, np.array([x]), axis=0)
+def quasi_newton(f: Function,x0: np.ndarray,eps: float,max_iter: int,method='BFGS'):
+    N=len(x0)
+    B=np.eye(N)  # Initial B matrix (Identity)
+    X=[x0]
+
+
+    while np.linalg.norm(f.df(X[-1]))>eps and len(X)<max_iter:
+        grad=f.df(X[-1])
+        d=-np.dot(B,grad)
+
+        # Minimize along the search direction
+        alpha_fun=lambda nu: f.f(X[-1]+nu*d)
+        res=scipy.optimize.minimize_scalar(alpha_fun)
+        nu=res.x
+
+        # Update X
+        X.append(X[-1]+nu*d)
+
+        s=X[-1]-X[-2]
+        y=f.df(X[-1])-f.df(X[-2])
+
+        if method == 'BFGS':
+            Bs=np.dot(B,s)
+            sy=np.dot(s.T,y)
+            y_yT=np.outer(y,y.T)
+            s_Bs=np.outer(s,Bs.T)
+            B=B+(np.outer(y,y.T)/sy)-(np.outer(Bs,Bs.T)/np.dot(s.T,Bs))
+        elif method == 'DFP':
+            sy=np.dot(s.T,y)
+            y_B=np.dot(B,y)
+            B=B+(np.outer(s,s.T)/sy)-(np.outer(y_B,y_B.T)/np.dot(y.T,y_B))
+
+
+
     return X
 
-def DFP(f: Function, x0: np.ndarray, eps: float, n: int):
-    """
-    Find the minimum of a function using the DFP method with the following parameters :
-    - `f: Function` a function object that has gradient method (`J.df`)
-    - `x0: np.ndarray` the starting point of the method
-    - `eps: float` the maximum error allowed
-    - `n: int` the maximum number of iterations allowed
-    the fonction returns an array of points `X: np.ndarray` which are the points of the path to the minimum
-    and the last element of the array is the minimum of the function.
-    """
-    X = np.array([x0])
-    B = np.eye(len(x0))
-    while np.linalg.norm(f.df(X[-1])) > eps and len(X) < n :
-        d = - B @ f.df(X[-1])
-        alpha = BFGS(f.partial(X[-1], d), np.array([[0]]), eps, n)[0]
-        alpha = alpha[-1]
-        x = X[-1] + alpha * d
-        s = x - X[-1]
-        y = f.df(x) - f.df(X[-1])
-        B = B + (s @ s.T)/(s.T @ y) - (B @ y @ y.T @ B)/(y.T @ B @ y)
-        X = np.append(X, np.array([x]), axis=0)
-    return X
-
-def quasi_newton(f: Function, x0: np.ndarray, eps: float, n: int, method: bool = True):
-    """
-    Find the minimum of a function using the quasi newton method with the following parameters :
-    - `f: Function` a function object that has gradient method (`J.df`)
-    - `x0: np.ndarray` the starting point of the method
-    - `eps: float` the maximum error allowed
-    - `n: int` the maximum number of iterations allowed
-    - `method: bool` if True the method used is BFGS, if False the method used is DFP
-    the fonction returns an array of points `X: np.ndarray` which are the points of the path to the minimum
-    and the last element of the array is the minimum of the function.
-    """
-    
-    if method == True:
-        return BFGS(f, x0, eps, n)
-    elif method == False:
-        return DFP(f, x0, eps, n)
+def quasi_newton_BFGS(f: Function, X0: np.ndarray, eps: float, niter: int):
+    return quasi_newton(f, X0, eps, niter, method='BFGS')
+def quasi_newton_DFP(f: Function, X0: np.ndarray, eps: float, niter: int):
+    return quasi_newton(f, X0, eps, niter, method='DFP')
 
 __METHODS_LABEL: dict[METHOD_TYPE, str] = {
+    quasi_newton_BFGS: 'Quasi Newton BFGS',
+    quasi_newton_DFP: 'Quasi Newton DFP',
     gradient_descent_fix_step              : 'Gradient Descent Fixed Step',
     quadratic_gradient_descent_optimal_step: 'Quadratic Gradient Descent Optimal Step',
     quadratic_conjuguate_gradient   : 'Conjuguate Gradient',
     newton                                 : 'Newton',
     gradient_descent_optimal_step          : 'Gradient Descent Optimal Step',
     newton_optimal_step                    : 'Newton Optimal Step',
-    BFGS                                   : 'BFGS',
-    DFP                                    : 'DFP',
-    quasi_newton                           : 'Quasi Newton'
 }
 
 METHODS_LABEL_PATH: dict[METHOD_TYPE, tuple[str, str]] = {method: (label, format_path(label)) for method, label in __METHODS_LABEL.items()}
