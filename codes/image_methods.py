@@ -72,7 +72,7 @@ def div(image_np):
     u, v = grad(image_np)
     return u + v
 
-def test_div_grad(u,v) :
+def test_div_grad(u, v) :
     """
     test la divergence et le gradient du vecteur u et v
     avec la relation <grad(u),v> = -<u,div(v)>
@@ -86,6 +86,7 @@ def test_div_grad(u,v) :
     gx, gy = grad(u)
     dx, dy = div(v)
     test = np.allclose(np.sum(gx*v + gy*v), -np.sum(u*dx + u*dy))
+    print(test)
     return test
 
 def add_noise(image_np, sigma):

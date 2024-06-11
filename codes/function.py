@@ -108,6 +108,8 @@ def gen_J_1(n: int):
     return get_J_1(A, b)
 
 
+def phi(s, alpha):
+    return abs(s)-alpha*np.log((alpha+abs(s))/alpha)
 
 
 

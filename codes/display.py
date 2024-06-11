@@ -1,11 +1,19 @@
 from typing import Callable, Literal
 import numpy as np
 
+from matplotlib import cm
 from matplotlib import pyplot as plt
 from matplotlib import contour as ctr
+from matplotlib.colors import Normalize
+
+
+
 
 from tools import time_func
-from function import Function, get_other_diago, condi_A
+from function import (Function,
+                      get_other_diago,
+                      condi_A,
+                      phi)
 from opti_methods import METHOD_TYPE
 
 
@@ -117,6 +125,8 @@ def display_partial_func(path: str, J: Function, methode: METHOD_TYPE, X0: np.nd
     
     plt.clf()
     cs = ctr.ContourSet(plt.gca(), i_lnspace, segs, cmap=cmap)
+    norm = Normalize(vmin=1, vmax=nbr_iter)
+    plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=plt.gca(), label='i')
     # plt.clabel(cs, inline=True, fontsize=8, fmt=lambda x: f'i = {x:.2f}')
         # plt.contour(xn, xn, np.array([[J(np.array([[x], [y]])) for x in xn] for y in xn]), cmap=cmap, alpha=0.5)
 
@@ -299,3 +309,52 @@ def display_time_N(path: str, J_gen: Callable[[int], Function], methode: METHOD_
     plt.grid()
     plt.savefig(path)
     print(f'File saved at {path}')
+
+
+def display_phi(s, alphas):
+
+    cmap = cm.get_cmap('Blues', len(alphas))  
+
+    i_colors = np.linspace(0, 1, len(alphas))[::-1]
+    i_max = len(alphas) - 1
+    i_mean = len(alphas) // 2
+
+    plt.clf()
+    for i, (alpha, i_color) in enumerate(zip(alphas, i_colors)):
+
+        y = phi(s, alpha)
+
+        color = cmap(i_color)
+        if i == i_mean:
+            plt.plot(s, y, label=fr'$\phi_\alpha$', color=color)
+        plt.plot(s, y, color=color)
+    plt.plot(s, np.abs(s), ls='--', color='black', label=r'$|s|$')
+
+    norm = Normalize(vmin=alphas[-1], vmax=alphas[0])
+    plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=plt.gca(), label=r'$\alpha$')
+
+    plt.title(r'$\phi(s, \alpha)$ and $\|\phi(s)\|$')
+    plt.xlabel('s')
+    plt.ylabel(r'$\phi(s, \alpha)$')
+    plt.legend()
+    plt.show()
+
+def estimate_u(v, lambda_):
+    # res = minimize(X, v, args=(v, lambda_, alpha), method='CG', jac=grad_J, options={'maxiter': niter})
+    # return res.x
+    pass
+
+def display_error_lambda(img_np, estimate_u):
+    lambdas = np.linspace(0.1, 5, 50)  # Adjust as needed
+    errors = []
+
+    for lambda_ in lambdas:
+        u_hat = estimate_u(img_np, lambda_)
+        error = np.mean((img_np - u_hat)**2)
+        errors.append(error)
+
+    plt.plot(lambdas, errors)
+    plt.xlabel('lambda')
+    plt.ylabel('MSE')
+    plt.title('MSE between original and estimated image vs lambda')
+    plt.show()

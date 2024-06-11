@@ -96,7 +96,7 @@ def display_all_compare_norm(test_funcs_collection: TestFuncsCollection):
                          J, methods_label,
                          X0,)
 
-@test_deco_n(func_collection, 1)
+@test_deco_n(func_collection, nbr_methods)
 def display_all_time_N(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_time_N for each method in METHODS_PATH.

@@ -16,7 +16,8 @@ from opti_methods import (METHOD_TYPE,
                           quadratic_conjuguate_gradient,
                           newton,
                           newton_optimal_step,
-                          gradient_descent_optimal_step,)
+                          gradient_descent_optimal_step)
+from display import display_phi
 
 
 METHODS: tuple[METHOD_TYPE, ...] = (
@@ -26,7 +27,7 @@ METHODS: tuple[METHOD_TYPE, ...] = (
     newton,
     newton_optimal_step,
     gradient_descent_optimal_step,
-)
+    )
 
 
 def test_hist(img):
@@ -172,20 +173,31 @@ def test_plot_objective(img):
     plt.ylabel('J(u)')
     plt.title('Evolution of the objective function J(u)')
     plt.show()
-    
+
+
+
 def main():
     path = 'Images'
     img = PIL.Image.open(f"{path}/lena.png")
     # test_hist(img)
     # test_div(img)
-    # test_div_grad(np.array([[1, 2, 3], [4, 5, 6]]), np.array([[1, 2, 3], [4, 5, 6]]))
-    test_plot_objective(np.array(img))
-    test_methods((quadratic_conjuguate_gradient,), np.array(img))
+    test_div_grad(np.array([[1, 2, 3], [4, 5, 6]]), np.array([[7, 8, 9], [10, 11, 12]]))
+    # test_plot_objective(np.array(img))
+    # test_methods((quadratic_conjuguate_gradient,), np.array(img))
+
+
+def test_computePhi():
+    s = np.linspace(-2, 2, 400) # On pourra changer les valeurs de s pour voir l'effet sur la fonction Phi
+    # alphas = [0.01, 0.25, 0.5, 1, 1.25, 1.5, 2] # feur
+    alphas = np.linspace(0.01, 2, 100)
+    display_phi(s, alphas)
+    plt.show()
 
 
 if __name__ == '__main__':
-    main()
-    
+    test_computePhi()
+    # main()
+  
     
     
     

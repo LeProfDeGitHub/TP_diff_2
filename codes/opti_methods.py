@@ -2,6 +2,8 @@ from typing import Callable
 import numpy as np
 from tools import format_path
 from function import Function
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 
 
 METHOD_TYPE = Callable[[Function, np.ndarray, float, int],
@@ -215,16 +217,22 @@ def quasi_newton(f: Function, x0: np.ndarray, eps: float, n: int, method: bool =
         return DFP(f, x0, eps, n)
 
 __METHODS_LABEL: dict[METHOD_TYPE, str] = {
-    gradient_descent_fix_step              : 'Gradient Descent Fixed Step',
-    quadratic_gradient_descent_optimal_step: 'Quadratic Gradient Descent Optimal Step',
-    quadratic_conjuguate_gradient   : 'Conjuguate Gradient',
-    newton                                 : 'Newton',
-    gradient_descent_optimal_step          : 'Gradient Descent Optimal Step',
-    newton_optimal_step                    : 'Newton Optimal Step',
-    BFGS                                   : 'BFGS',
-    DFP                                    : 'DFP',
-    quasi_newton                           : 'Quasi Newton'
+    gradient_descent_fix_step               : 'Gradient Descent Fixed Step',
+    quadratic_gradient_descent_optimal_step : 'Quadratic Gradient Descent Optimal Step',
+    quadratic_conjuguate_gradient           : 'Conjuguate Gradient',
+    newton                                  : 'Newton',
+    gradient_descent_optimal_step           : 'Gradient Descent Optimal Step',
+    newton_optimal_step                     : 'Newton Optimal Step',
+    BFGS                                    : 'BFGS',
+    DFP                                     : 'DFP',
+    quasi_newton                            : 'Quasi Newton'
 }
 
 METHODS_LABEL_PATH: dict[METHOD_TYPE, tuple[str, str]] = {method: (label, format_path(label)) for method, label in __METHODS_LABEL.items()}
+
+
+
+
+
+    
 

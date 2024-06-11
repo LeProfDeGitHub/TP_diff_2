@@ -77,7 +77,7 @@ nbr_methods = len(METHODS)
 
 X0 = np.array([[-5], [1]])
 
-@test_deco_n(func_collection, nbr_methods)
+# @test_deco_n(func_collection, nbr_methods)
 def display_all_converence_2d(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_convergence_2d for each method in METHODS_PATH.
@@ -92,7 +92,7 @@ def display_all_converence_2d(test_funcs_collection: TestFuncsCollection):
                                np.linspace(-10, 10, 100),
                                np.linspace(-10, 10, 100))
 
-@test_deco_n(func_collection, nbr_methods)
+# @test_deco_n(func_collection, nbr_methods)
 def display_all_converence_by_X0(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_convergence_by_X0 for each method in METHODS_PATH.
@@ -120,7 +120,7 @@ def display_all_partial_func(test_funcs_collection: TestFuncsCollection):
         display_partial_func(f'figure\\{path}\\partial_func',
                              J, method, X0)
 
-@test_deco_n(func_collection, nbr_methods)
+# @test_deco_n(func_collection, nbr_methods)
 def display_all_norm(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_norm for each method in METHODS_PATH.
@@ -133,7 +133,7 @@ def display_all_norm(test_funcs_collection: TestFuncsCollection):
         display_norm(f'figure\\{path}',
                      J, method, X0)
 
-@test_deco_n(func_collection, nbr_methods)
+# @test_deco_n(func_collection, nbr_methods)
 def display_all_error(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_error for each method in METHODS_PATH.
@@ -148,7 +148,7 @@ def display_all_error(test_funcs_collection: TestFuncsCollection):
                       J, method, X0,
                       x_solu)
 
-@test_deco_n(func_collection, 1)
+# @test_deco_n(func_collection, 1)
 def display_all_compare_error(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_compare_error for each method in METHODS_LABELS.
@@ -164,7 +164,7 @@ def display_all_compare_error(test_funcs_collection: TestFuncsCollection):
                           J, methods_label, X0,
                           x_solu)
 
-@test_deco_n(func_collection, 1)
+# @test_deco_n(func_collection, 1)
 def display_ka_wrp(test_funcs_collection: TestFuncsCollection):
     '''
     Call display_ka for the condition number of the matrix A.
@@ -173,7 +173,7 @@ def display_ka_wrp(test_funcs_collection: TestFuncsCollection):
     test_funcs_collection.print_current_nbr()
     display_ka('figure\\condition_number.png', 500)
 
-@test_deco_n(func_collection, 1)
+# @test_deco_n(func_collection, 1)
 def comparaison_condi_wrp(test_funcs_collection: TestFuncsCollection):
     """
     Call comparaison_condi for a conditioned matrix and an unconditioned matrix for a quadratic function.
