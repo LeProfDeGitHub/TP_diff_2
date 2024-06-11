@@ -153,12 +153,10 @@ def newton_optimal_step(f: Function, X0: np.ndarray, eps: float, niter: int):
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
     return X
 
-
-def quasi_newton(f: Function,x0: np.ndarray,eps: float,max_iter: int,method='BFGS'):
+def quasi_newton(f: Function,x0: np.ndarray,eps: float,max_iter: int, method='BFGS'):
     N=len(x0)
     B=np.eye(N)  # Initial B matrix (Identity)
     X=[x0]
-
 
     while np.linalg.norm(f.df(X[-1]))>eps and len(X)<max_iter:
         grad=f.df(X[-1])
@@ -186,40 +184,24 @@ def quasi_newton(f: Function,x0: np.ndarray,eps: float,max_iter: int,method='BFG
             y_B=np.dot(B,y)
             B=B+(np.outer(s,s.T)/sy)-(np.outer(y_B,y_B.T)/np.dot(y.T,y_B))
 
-
-
-    return X
+    return np.array(X)
 
 def quasi_newton_BFGS(f: Function, X0: np.ndarray, eps: float, niter: int):
     return quasi_newton(f, X0, eps, niter, method='BFGS')
+
 def quasi_newton_DFP(f: Function, X0: np.ndarray, eps: float, niter: int):
     return quasi_newton(f, X0, eps, niter, method='DFP')
 
+
 __METHODS_LABEL: dict[METHOD_TYPE, str] = {
-    quasi_newton_BFGS: 'Quasi Newton BFGS',
-    quasi_newton_DFP: 'Quasi Newton DFP',
-    gradient_descent_fix_step              : 'Gradient Descent Fixed Step',
-    quadratic_gradient_descent_optimal_step: 'Quadratic Gradient Descent Optimal Step',
-    quadratic_conjuguate_gradient   : 'Conjuguate Gradient',
-    newton                                 : 'Newton',
-    gradient_descent_optimal_step          : 'Gradient Descent Optimal Step',
-    newton_optimal_step                    : 'Newton Optimal Step',
-    gradient_descent_fix_step               : 'Gradient Descent Fixed Step',
     quadratic_gradient_descent_optimal_step : 'Quadratic Gradient Descent Optimal Step',
     quadratic_conjuguate_gradient           : 'Conjuguate Gradient',
-    newton                                  : 'Newton',
+    gradient_descent_fix_step               : 'Gradient Descent Fixed Step',
     gradient_descent_optimal_step           : 'Gradient Descent Optimal Step',
+    newton                                  : 'Newton',
     newton_optimal_step                     : 'Newton Optimal Step',
-    BFGS                                    : 'BFGS',
-    DFP                                     : 'DFP',
-    quasi_newton                            : 'Quasi Newton'
+    quasi_newton_BFGS                       : 'Quasi Newton BFGS',
+    quasi_newton_DFP                        : 'Quasi Newton DFP',
 }
 
 METHODS_LABEL_PATH: dict[METHOD_TYPE, tuple[str, str]] = {method: (label, format_path(label)) for method, label in __METHODS_LABEL.items()}
-
-
-
-
-
-    
-
