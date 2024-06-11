@@ -111,6 +111,7 @@ def display_partial_func(path: str, J: Function, methode: METHOD_TYPE, X0: np.nd
     yns = np.array([[J.partial(X, d)(x)[0, 0] for x in xn]
                     for X, d in zip(Xn, grad_norm)])
 
+
     segs = [[[[x, y] for x, y in zip(xn, yn)]] for yn in yns]
 
     cmap = plt.get_cmap('Blues')
