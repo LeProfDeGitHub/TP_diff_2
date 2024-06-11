@@ -176,7 +176,9 @@ def main():
     img_np = np.array(img)
     # test_hist(img)
     # test_div(img)
-    # test_div_grad(np.array([[1, 2, 3], [4, 5, 6]]), np.array([[7, 8, 9], [10, 11, 12]]))
+    u=np.array([[1,2,3],[4,5,6],[7,8,9]],dtype=np.float32)
+    v=np.array([[1,0,-1],[1,0,-1],[1,0,-1]],dtype=np.float32)
+    test_div_grad(u, v)
     # test_plot_objective(np.array(img))
     test_methods((quadratic_conjuguate_gradient,), img_np)
 
