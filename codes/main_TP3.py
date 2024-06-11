@@ -181,7 +181,9 @@ def main():
     img = PIL.Image.open(f"{path}/lena.png")
     # test_hist(img)
     # test_div(img)
-    test_div_grad(np.array([[1, 2, 3], [4, 5, 6]]), np.array([[7, 8, 9], [10, 11, 12]]))
+    u=np.array([[1,2,3],[4,5,6],[7,8,9]],dtype=np.float32)
+    v=np.array([[1,0,-1],[1,0,-1],[1,0,-1]],dtype=np.float32)
+    test_div_grad(u, v)
     # test_plot_objective(np.array(img))
     # test_methods((quadratic_conjuguate_gradient,), np.array(img))
 
@@ -196,7 +198,7 @@ def test_computePhi():
 
 if __name__ == '__main__':
     test_computePhi()
-    # main()
+    main()
   
     
     

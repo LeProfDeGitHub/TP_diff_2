@@ -11,18 +11,24 @@ def modify_image(image_np):
 
 
 
-def grad(image_np) -> tuple[np.ndarray, np.ndarray]: 
+def grad(image_np) -> tuple[np.ndarray, np.ndarray]:
     """
     Affiche le gradient de l'image.
     :param Im: Image à traiter
     :return: gradient de l'image
     """
-    image_np = image_np.astype(np.float32)
-    # Calcul du gradient
-    gx, gy = np.gradient(image_np)
-    
-    return gx, gy
+    m,n=image_np.shape
 
+    gradient_x=np.zeros((m,n))
+    gradient_y=np.zeros((m,n))
+
+    gradient_x[:-1,:]=image_np[1:,:]-image_np[:-1,:]
+    gradient_x[-1,:]=0
+
+    gradient_y[:,:-1]=image_np[:,1:]-image_np[:,:-1]
+    gradient_y[:,-1]=0
+
+    return gradient_x,gradient_y
 def grad_norm(u):
     """
     Retourne une image N qui correspond à la norme du gradient de l'image u. 
@@ -68,26 +74,48 @@ def grad_norm(u):
     
 #     return divergence
 
-def div(image_np):
-    u, v = grad(image_np)
-    return u + v
-
-def test_div_grad(u, v) :
+def div(v: np.ndarray) -> np.ndarray:
     """
-    test la divergence et le gradient du vecteur u et v
+    Calcule la divergence d'un champ de vecteurs v = (v1, v2) de dimension (m, n).
+    - `v` est un array numpy de dimension (m, n)
+
+    """
+    m, n = v.shape
+    divv = np.zeros((m, n))
+
+    # Calcul de la divergence selon les définitions données
+    divv[1:-1, :] = v[1:-1, :] - v[:-2, :]
+    divv[:, 1:-1] += v[:, 1:-1] - v[:, :-2]
+    divv[0, :] += v[0, :]
+    divv[:, 0] += v[:, 0]
+    divv[-1, :] -= v[-2, :]
+    divv[:, -1] -= v[:, -2]
+
+    return divv
+def test_div_grad(u,v):
+    """
+    Test la divergence et le gradient du vecteur u et v
     avec la relation <grad(u),v> = -<u,div(v)>
     :param u: vecteur u
     :param v: vecteur v
     :return: booléen
     """
-    u = u.astype(np.float32)
-    v = v.astype(np.float32)
-    # Calcul du gradient
-    gx, gy = grad(u)
-    dx, dy = div(v)
-    test = np.allclose(np.sum(gx*v + gy*v), -np.sum(u*dx + u*dy))
-    print(test)
+
+    div_v=div(v)
+    grad_u=grad(u)
+
+    print("div(v):",div_v)
+    print("grad(u):",grad_u)
+
+    u_div_v=np.sum(u*div_v)
+    grad_u_v=np.sum(grad_u*v)
+    test=np.allclose(grad_u_v,-u_div_v)
+
+    print("grad(u) * v:",grad_u_v)
+    print("u * div(v):",u_div_v)
+    print("Test passed:",test)
     return test
+
 
 def add_noise(image_np, sigma):
     """

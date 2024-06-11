@@ -166,8 +166,6 @@ def quasi_newton(f: Function,x0: np.ndarray,eps: float,max_iter: int, method='BF
         alpha_fun=lambda nu: f.f(X[-1]+nu*d)
         res=scipy.optimize.minimize_scalar(alpha_fun)
         nu=res.x
-
-        # Update X
         X.append(X[-1]+nu*d)
 
         s=X[-1]-X[-2]
@@ -176,8 +174,6 @@ def quasi_newton(f: Function,x0: np.ndarray,eps: float,max_iter: int, method='BF
         if method == 'BFGS':
             Bs=np.dot(B,s)
             sy=np.dot(s.T,y)
-            y_yT=np.outer(y,y.T)
-            s_Bs=np.outer(s,Bs.T)
             B=B+(np.outer(y,y.T)/sy)-(np.outer(Bs,Bs.T)/np.dot(s.T,Bs))
         elif method == 'DFP':
             sy=np.dot(s.T,y)
