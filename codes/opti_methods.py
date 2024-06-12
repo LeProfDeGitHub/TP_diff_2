@@ -73,6 +73,7 @@ def quadratic_conjuguate_gradient(f: Function, X0: np.ndarray, eps: float, niter
     X = np.array([X0])
     r0 = p = - f.df(X0) # equivalent to r0 = p = b - A @ X0
     for i in range(niter):
+        print(i)
         alpha = (r0.T @ r0)/(p.T @ f.ddf(X[-1]) @ p) # equivalent to alpha = (r0.T @ r0)/(p.T @ A @ p)
         X = np.append(X, np.array([X[-1] + alpha * p]), axis=0)
         r1 = - f.df(X[-1])

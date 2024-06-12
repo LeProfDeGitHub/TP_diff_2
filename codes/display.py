@@ -237,7 +237,6 @@ def display_error_N(path: str, J_gen: Callable[[int], Function], methode: METHOD
     N_iter = N_iter[::-1, :]
 
     err_max = np.nanmax(N_iter)
-    err_min = np.nanmin(N_iter)
 
     norm = LogNorm(vmin=10e-10, vmax=float(err_max))
 
@@ -250,10 +249,6 @@ def display_error_N(path: str, J_gen: Callable[[int], Function], methode: METHOD
     # plt.grid()
     plt.savefig(f'{path}\\error_N.png')
     print(f'File saved at {path}\\error_N.png')
-    
-
-
-        
 
 
 def display_compare_norm(path: str, J: Function,
