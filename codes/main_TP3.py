@@ -19,8 +19,13 @@ from opti_methods import (METHOD_TYPE,
                           newton_optimal_step,
                           gradient_descent_optimal_step,
                           quasi_newton_BFGS,
-                          quasi_newton_DFP,)
-from display import display_phi
+                          quasi_newton_DFP,
+                          gradien_pas_fixe_J,
+                          BFGS_J,
+                          DFP_J)
+
+
+from display import display_phi, display_error_gradient_j, display_quadratic_error, display_compute_image
 
 
 
@@ -184,16 +189,18 @@ def test_methods(methods: tuple[METHOD_TYPE, ...], img_np: np.ndarray):
 
 
 def main():
-    
-    path = 'Images'
-    img = PIL.Image.open(f"{path}/lena.png")
-    img = img.resize((100,100))
-    img_np = np.array(img)
-    # test_hist(img)
-    # test_div(img)
-
-    # test_div_grad()
-    # test_plot_objective(np.array(img))
+    path='Images'
+    img=PIL.Image.open(f"{path}/lena.png")
+    img = img.convert('L')
+    img_np=np.array(img)
+    img=img.resize((75,75))
+    img_np=np.array(img,dtype=np.float32)
+    new_img_np=add_noise(img_np,10)
+    new_img=PIL.Image.fromarray(new_img_np.astype(np.uint8))
+    new_img.show()
+    u=BFGS_J(new_img_np,new_img_np,100,4,0.1)
+    u_img=PIL.Image.fromarray(u.astype(np.uint8))
+    u_img.show()
     test_methods((
         quadratic_conjuguate_gradient,
         # quadratic_gradient_descent_optimal_step,

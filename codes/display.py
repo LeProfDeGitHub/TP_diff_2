@@ -1,18 +1,18 @@
 from typing import Callable, Literal
 import numpy as np
-
+import PIL
 from matplotlib import cm
 from matplotlib import pyplot as plt
 from matplotlib import contour as ctr
 from matplotlib.colors import Normalize, LogNorm
-
+from image_methods import (add_noise)
 from tools import time_func
 from function import (Function,
                       get_other_diago,
                       condi_A,
                       computePhi,
                       computeAbsPhi)
-from opti_methods import METHOD_TYPE
+from opti_methods import METHOD_TYPE, gradien_pas_fixe_J, DFP_J, BFGS_J
 
 
 def plot_contour(f: Function, x_space: np.ndarray, y_space: np.ndarray, z_space: np.ndarray | None = None, norm = None):
@@ -473,3 +473,87 @@ def display_error_lambda(img_np, estimate_u):
     plt.title('MSE between original and estimated image vs lambda')
     plt.show()
 
+def display_quadratic_error(path : str):
+    img = PIL.Image.open(path)
+    img = img.convert('L')
+    img = img.resize((100, 100))
+    img_np = np.array(img)
+    new_img_np = img_np
+    lmbd = np.linspace(0, 1, 20)
+    error1 = []
+    error2 = []
+    error3 = []
+    error4 = []
+    error5 = []
+    error6 = []
+    for i in lmbd:
+        u1 =gradien_pas_fixe_J(new_img_np,new_img_np,100,0.001,i,0.01)
+        u2 =DFP_J(new_img_np,new_img_np,100,i,0.01)
+        u3 =BFGS_J(new_img_np,new_img_np,100,i,0.01)
+        error1.append(np.linalg.norm((u1 - img_np)))
+        error3.append(np.linalg.norm((u2 - img_np)))
+        error5.append(np.linalg.norm((u3 - img_np)))
+    for i in lmbd:
+        u1 =gradien_pas_fixe_J(new_img_np,new_img_np,100,0.001,i,0.1)
+        u2 =DFP_J(new_img_np,new_img_np,100,i,0.1)
+        u3 =BFGS_J(new_img_np,new_img_np,100,i,0.1)
+
+        error2.append(np.linalg.norm((u1 - img_np)))
+        error4.append(np.linalg.norm((u2 - img_np)))
+        error6.append(np.linalg.norm((u3 - img_np)))
+
+    plt.clf()
+    plt.figure(1)
+    plt.plot(lmbd, error1 , label = 'gradient pas fixe')
+    plt.plot(lmbd, error3 , label = 'DFP')
+    plt.plot(lmbd, error5 , label = 'BFGS')
+    plt.xlabel('Lambda')
+    plt.ylabel('Error')
+    plt.legend()
+    plt.title('Error as a function of lambda for alpha = 0.01')
+    plt.figure(2)
+    plt.plot(lmbd, error2 , label = 'gradient pas fixe')
+    plt.plot(lmbd, error4 , label = 'DFP')
+    plt.plot(lmbd, error6 , label = 'BFGS')
+    plt.xlabel('Lambda')
+    plt.ylabel('Error')
+    plt.legend()
+    plt.title('Error as a function of lambda for alpha = 0.1')
+    plt.show()
+    print("done")
+
+def display_error_gradient_j(path, lmbd):
+    img=PIL.Image.open(path)
+    img=img.convert('L')
+    img_np=np.array(img)
+    new_img_np=add_noise(img_np,10)
+    errors = []
+    nb_iter = [i for i in range(0, 150, 50)]
+    for i in nb_iter:
+        u =gradien_pas_fixe_J(new_img_np,new_img_np,i,0.01,lmbd,0.01)
+        error = np.linalg.norm((img_np - u))
+        errors.append(error)
+    plt.plot(nb_iter, errors)
+    plt.xlabel('Number of iterations')
+    plt.ylabel('Error')
+    plt.title('Error between original and estimated image vs number of iterations')
+    plt.show()
+
+def display_compute_image(path :str) :
+    img = PIL.Image.open(path)
+    img = img.convert('L')
+    img=img.resize((100,100))
+    img_np = np.array(img , dtype = np.float32)
+    new_img_np = add_noise(img_np, 10)
+    new_img = PIL.Image.fromarray(new_img_np.astype(np.uint8))
+    new_img.show()
+    u1 = gradien_pas_fixe_J (new_img_np,new_img_np,100,0.01,4,0.1)
+    u2 = DFP_J  (new_img_np,new_img_np,100,4,0.1)
+    u3 = BFGS_J (new_img_np,new_img_np,100,4,0.1)
+    new_img1 = PIL.Image.fromarray(u1.astype(np.uint8))
+    new_img2 = PIL.Image.fromarray(u2.astype(np.uint8))
+    new_img3 = PIL.Image.fromarray(u3.astype(np.uint8))
+    new_img1.show()
+    new_img2.show()
+    new_img3.show()
+    print("done")

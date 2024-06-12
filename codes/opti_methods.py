@@ -1,7 +1,7 @@
 from typing import Callable
 import numpy as np
 from tools import format_path
-from function import Function
+from function import (Function, grad_J, Jfonction)
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import scipy
@@ -188,6 +188,97 @@ def quasi_newton_BFGS(f: Function, X0: np.ndarray, eps: float, niter: int):
 
 def quasi_newton_DFP(f: Function, X0: np.ndarray, eps: float, niter: int):
     return quasi_newton(f, X0, eps, niter, method='DFP')
+
+def gradien_pas_fixe_J(v, u0, nb_iter, pas, lmbd, alpha):
+    u = u0.copy()
+    for i in range(nb_iter):
+        grad = -grad_J(u, v, lmbd, alpha)
+        u = u + pas * grad
+    return u
+
+def DFP_J(v, u0, nb_iter, lmbd, alpha, eps=1e-3):
+    u = u0.copy()
+    m, n = u.shape
+    N = m * n
+    B = np.eye(N)  # Initial B matrix (Identity)
+    u_flat = u.flatten()
+
+    def grad_J_flat(u_flat):
+        u = u_flat.reshape((m, n))
+        return grad_J(u, v, lmbd, alpha).flatten()
+
+    def Jfonction_flat(u_flat):
+        u = u_flat.reshape((m, n))
+        return Jfonction(u, v, lmbd, alpha)
+
+    iter_count = 0
+    while np.linalg.norm(grad_J_flat(u_flat)) > eps and iter_count < nb_iter:
+        grad = grad_J_flat(u_flat)
+        d = -np.dot(B, grad)
+
+        # Minimize along the search direction
+        alpha_fun = lambda nu: Jfonction_flat(u_flat + nu * d)
+        res = scipy.optimize.minimize_scalar(alpha_fun)
+        nu = res.x
+
+
+        u_flat1 = u_flat + nu * d
+
+        grad_new = grad_J_flat(u_flat1)
+        y = grad_new - grad
+        s = u_flat - u_flat1
+        if np.linalg.norm(y) < 1e-5:
+            break
+
+        sy = np.dot(s.T, y)
+        y_B = np.dot(B, y)
+        B = B + np.dot(s, s.T) / sy - np.dot(np.dot(B,y), np.dot(y.T,B)) / np.dot(y.T, y_B)
+        iter_count += 1
+
+    u = u_flat.reshape((m, n))
+    return u
+
+def BFGS_J(v, u0, nb_iter, lmbd, alpha, eps=1e-3):
+    u = u0.copy()
+    m, n = u.shape
+    N = m * n
+    B = np.eye(N)  # Initial B matrix (Identity)
+    u_flat = u.flatten()
+
+    def grad_J_flat(u_flat):
+        u = u_flat.reshape((m, n))
+        return grad_J(u, v, lmbd, alpha).flatten()
+
+    def Jfonction_flat(u_flat):
+        u = u_flat.reshape((m, n))
+        return Jfonction(u, v, lmbd, alpha)
+
+    iter_count = 0
+    while np.linalg.norm(grad_J_flat(u_flat)) > eps and iter_count < nb_iter:
+        grad = grad_J_flat(u_flat)
+        d = -np.dot(B, grad)
+
+        # Minimize along the search direction
+        alpha_fun = lambda nu: Jfonction_flat(u_flat + nu * d)
+        res = scipy.optimize.minimize_scalar(alpha_fun)
+        nu = res.x
+
+        u_flat1 = u_flat + nu * d
+
+        grad_new = grad_J_flat(u_flat1)
+        y = grad_new - grad
+        s = u_flat - u_flat1
+        if np.linalg.norm(y) < 1e-5:
+            break
+
+        Bs = np.dot(B,s)
+        ys = np.dot(y.T,s)
+        B  = B + (np.dot(y,y.T)/ys ) - (np.dot(Bs,np.dot(s.T,B))/np.dot(s.T,Bs))
+        u_flat = u_flat1
+        iter_count += 1
+
+    u = u_flat.reshape((m, n))
+    return u
 
 
 __METHODS_LABEL: dict[METHOD_TYPE, str] = {

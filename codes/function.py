@@ -113,6 +113,25 @@ def computePhi(s, alpha):
 def computeAbsPhi(s, alpha):
     return abs( abs(s) - alpha * np.log(1 + abs(s)/alpha))
 
+def dphi(s, alpha):
+    """
+    compute the derivative of the function phi_alpha
+    - `s: np.ndarray` the input of the function
+    - `alpha: float` the parameter of the function
+    return the derivative of the function phi_alpha
+    """
+    return np.where(s>=0,s/(alpha+s),s/(alpha-s))
+
+def Jfonction (u, v, lmbd, alpha):
+    gx, gy = np.gradient(u)
+    return 0.5 * np.linalg.norm(u - v)**2 + lmbd * (np.sum(computePhi(gx, alpha)) + np.sum(computePhi(gy, alpha)))
+
+def grad_J(u , v, lmbd, alpha):
+    gx = np.gradient(u, axis=1)
+    gy = np.gradient(u, axis=0)
+    divergence = np.gradient(dphi(gx, alpha), axis=1) + np.gradient(dphi(gy, alpha), axis=0)
+    return u - v - lmbd * divergence
+
 
 if __name__ == '__main__':
 
