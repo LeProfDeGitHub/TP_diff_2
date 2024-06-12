@@ -180,7 +180,6 @@ def main():
     v=np.array([[1,0,-1],[1,0,-1],[1,0,-1]],dtype=np.float32)
     test_div_grad(u, v)
     # test_plot_objective(np.array(img))
-    test_methods((quadratic_conjuguate_gradient,), img_np)
 
 
 def test_computePhi():
