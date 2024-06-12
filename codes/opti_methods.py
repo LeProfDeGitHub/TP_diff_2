@@ -197,8 +197,6 @@ def gradien_pas_fixe_J(v, u0, nb_iter, pas, lambda_, alpha):
     return u
 
 
-import numpy as np
-import scipy.optimize
 
 def dfp_J(v, u0, nb_iter, lambda_, alpha, eps=1e-3):
     u = u0.copy()
