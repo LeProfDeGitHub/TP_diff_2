@@ -109,8 +109,9 @@ def gen_J_1(n: int):
 
 
 def computePhi(s, alpha):
-    return abs(s)-alpha*np.log((alpha+abs(s))/alpha)
-
+    return abs(s) - alpha * np.log((alpha + abs(s)) / alpha)
+def computeAbsPhi(s, alpha):
+    return abs( abs(s) - alpha * np.log(1 + abs(s)/alpha))
 
 
 if __name__ == '__main__':

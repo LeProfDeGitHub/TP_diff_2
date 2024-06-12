@@ -10,7 +10,8 @@ from tools import time_func
 from function import (Function,
                       get_other_diago,
                       condi_A,
-                      computePhi)
+                      computePhi,
+                      computeAbsPhi)
 from opti_methods import METHOD_TYPE
 
 
@@ -366,35 +367,31 @@ def display_time_N(path: str, J_gen: Callable[[int], Function], methode: METHOD_
 
 
 
-def display_phi(s, alphas):
+def display_phi(path : str ,s : np.ndarray  , alphas : np.ndarray ):
 
 
-    cmap = cm.get_cmap('Blues', len(alphas))
+    cmap = cm.get_cmap('viridis', len(alphas))
 
     i_colors = np.linspace(0, 1, len(alphas))
-    i_max = len(alphas) - 1
     i_mean = len(alphas) // 2
 
     plt.clf()
     for i, (alpha, i_color) in enumerate(zip(alphas, i_colors)):
 
         y = computePhi(s, alpha)
-
         color = cmap(i_color)
         if i == i_mean:
             plt.plot(s, y, label=fr'$\phi_\alpha$', color=color)
         plt.plot(s, y, color=color)
-    plt.plot(s, abs(s), ls='--', color='black', label=r'$|s|$')
-
+    plt.plot(s, abs(s), ls='--', color='black', label=r'$\|\phi(s)\|$')
     norm = Normalize(vmin=alphas[-1], vmax=alphas[0])
     plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=plt.gca(), label=r'$\alpha$')
-
     plt.title(r'$\phi(s, \alpha)$ and $\|\phi(s)\|$')
     plt.xlabel('s')
     plt.ylabel(r'$\phi(s, \alpha)$')
     plt.legend()
-    plt.savefig('figure/phi.svg')
-    plt.show()
+    plt.savefig(f'{path}\\phi.svg')
+    print(f'File saved at {path}\\phi.svg')
 
 def estimate_u(img_np, lambda_):
     # res = minimize(X, img_np, args=(img_np, lambda_), method='CG', jac=grad_J, options={'maxiter': niter})
