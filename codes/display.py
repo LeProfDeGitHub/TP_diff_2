@@ -10,7 +10,7 @@ from tools import time_func
 from function import (Function,
                       get_other_diago,
                       condi_A,
-                      phi)
+                      computePhi)
 from opti_methods import METHOD_TYPE
 
 
