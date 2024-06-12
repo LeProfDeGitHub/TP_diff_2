@@ -125,6 +125,7 @@ def add_noise(image_np, sigma):
     :param sigma: Ecart-type du bruit
     :return: Image bruitée
     """
+
     image_np = image_np.astype(np.float32)
     noise = np.random.normal(0, sigma, image_np.shape)
     image_noisy = image_np + noise
