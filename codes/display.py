@@ -368,6 +368,7 @@ def display_time_N(path: str, J_gen: Callable[[int], Function], methode: METHOD_
 
 def display_phi(s, alphas):
 
+
     cmap = cm.get_cmap('Blues', len(alphas))
 
     i_colors = np.linspace(0, 1, len(alphas))
