@@ -66,7 +66,8 @@ def display_convergence_2d(path: str, J: Function, methode: METHOD_TYPE, X0: np.
     for X, grad_val in zip(Xn, norm_grad):
         plt.arrow(X[0, 0], X[1, 0], grad_val[0, 0], grad_val[1, 0], head_width=0.5, head_length=0.5, fc='k', ec='k')
 
-    plt.savefig(f'{path}\\convergence_grad_de.png')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\convergence_grad_de.png', bbox_inches='tight')
     print(f'File saved at {path}\\convergence_grad_de.png')
 
 
@@ -96,7 +97,8 @@ def display_convergence_by_X0(path: str, J: Function, methode: METHOD_TYPE,
     plt.xlabel('x')
     plt.ylabel('y')
 
-    plt.savefig(f'{path}\\convergence_by_X0.png')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\convergence_by_X0.png', bbox_inches='tight')
     print(f'File saved at {path}\\convergence_by_X0.png')
 
 
@@ -132,10 +134,10 @@ def display_partial_func(path: str, J: Function, methode: METHOD_TYPE, X0: np.nd
     cs = ctr.ContourSet(plt.gca(), i_lnspace, segs, cmap=cmap)
     norm = Normalize(vmin=1, vmax=nbr_iter)
     plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=plt.gca(), label='i')
-    # plt.clabel(cs, inline=True, fontsize=8, fmt=lambda x: f'i = {x:.2f}')
-        # plt.contour(xn, xn, np.array([[J(np.array([[x], [y]])) for x in xn] for y in xn]), cmap=cmap, alpha=0.5)
-
-    plt.savefig(f'{path}\\partial_functs.png')
+    plt.xlabel('t')
+    plt.ylabel(r'$f(x_i - t\nabla f(x_i))$')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\partial_functs.png', bbox_inches='tight')
     print(f'File saved at {path}\\partial_functs.png')
 
 
@@ -145,7 +147,8 @@ def display_partial_func(path: str, J: Function, methode: METHOD_TYPE, X0: np.nd
         plt.plot(xn, yns[iy])
         plt.xlabel('t')
         plt.ylabel(r'$f(x_i - t\nabla f(x_i))$')
-        plt.savefig(f'{path}\\partial_funct({i}).png')
+        plt.tight_layout()
+        plt.savefig(f'{path}\\partial_funct({i}).png', bbox_inches='tight')
 
 
 def display_norm(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray,
@@ -177,7 +180,8 @@ def display_norm(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray,
     plt.ylabel(r'$\|\nabla f(x_i)\|$')
     plt.xticks(np.linspace(0, len(Xn)-1, 10, dtype=int))
     plt.grid()
-    plt.savefig(f'{path}\\convergence.png')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\convergence.png', bbox_inches='tight')
     print(f'File saved at {path}\\convergence.png')
 
 
@@ -202,7 +206,8 @@ def display_error(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray, 
     plt.ylabel(r'$\|x_i-x^*\|$')
     plt.xticks(np.linspace(0, len(Xn)-1, 10, dtype=int))
     plt.grid()
-    plt.savefig(f'{path}\\error.png')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\error.png', bbox_inches='tight')
     print(f'File saved at {path}\\error.png')
 
 
@@ -247,7 +252,8 @@ def display_error_N(path: str, J_gen: Callable[[int], Function], methode: METHOD
     plt.xticks(np.linspace(0, N_iter.shape[1]-1, 10, dtype=int), rotation=45)
     plt.yticks(np.arange(len(n_space)), [str(n) for n in n_space[::-1]])
     # plt.grid()
-    plt.savefig(f'{path}\\error_N.png')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\error_N.png', bbox_inches='tight')
     print(f'File saved at {path}\\error_N.png')
 
 
@@ -265,7 +271,7 @@ def display_compare_norm(path: str, J: Function,
     '''
     plt.clf()
     for methode, label in methodes_labels:
-        Xn = methode(J, X0, 5e-2, 1000)
+        Xn = methode(J, X0, 5e-2, 20_000)
     
         grad = [J.df(X) for X in Xn]
 
@@ -276,7 +282,8 @@ def display_compare_norm(path: str, J: Function,
     plt.ylabel(r'$\|\nabla f(x_i)\|$')
     plt.grid()
 
-    plt.savefig(f'{path}\\convergence.png')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\convergence.png', bbox_inches='tight')
     print(f'File saved at {path}\\convergence.png')
 
 
@@ -305,7 +312,8 @@ def display_compare_error(path: str, J: Function,
     plt.xlabel('Nombre d\'itérations $i$')
     plt.ylabel(r'$\|x_i-x^*\|$')
     plt.grid()
-    plt.savefig(f'{path}\\error.png')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\error.png', bbox_inches='tight')
     print(f'File saved at {path}\\error.png')
 
 
@@ -328,7 +336,8 @@ def display_ka(path: str, nmax: int):
     plt.title('Condition number of the matrix A')
     plt.plot(range(1, nmax), ka)
     plt.grid()
-    plt.savefig(path)
+    plt.tight_layout()
+    plt.savefig(path, bbox_inches='tight')
     print(f'File saved at {path}')
 
 
@@ -357,9 +366,63 @@ def display_time_N(path: str, J_gen: Callable[[int], Function], methode: METHOD_
     plt.title('Time taken to compute the gradient descent method')
     plt.plot(n_space, time)
     plt.grid()
-    plt.savefig(f'{path}\\time_N.png')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\time_N.png', bbox_inches='tight')
     print(f'File saved at {path}\\time_N.png')
 
+
+def display_error_J(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray, solution: np.ndarray):
+    '''
+    Display the error of the gradient descent method at each iteration for functions of different sizes with the
+    following parameters:
+    - `path: str` the path to save the figure
+    - `J: Function` a function object that has the `df` method
+    - `methode: METHODE_TYPE` the method to use
+    - `X0: np.ndarray` the starting point of the method
+    - `solution: np.ndarray` the minimum of the function
+
+    The function saves the figure at the path `path` and print a message to confirm the saving.
+    '''
+    Xn = methode(J, X0, 5e-2, 20_000)
+    
+    err = np.array([np.linalg.norm(J(x) - J(solution)) for x in Xn])
+
+    plt.clf()
+    plt.semilogy(np.arange(len(Xn)), err)
+    plt.xlabel('Nombre d\'itérations $i$')
+    plt.ylabel(r'$\|J(x_i)-J(x^*)\|$')
+    plt.xticks(np.linspace(0, len(Xn)-1, 10, dtype=int))
+    plt.grid()
+    plt.tight_layout()
+    plt.savefig(f'{path}\\error.png', bbox_inches='tight')
+    print(f'File saved at {path}\\error_J.png')
+
+
+def display_error_J_solution(path: str, J: Function, methode: METHOD_TYPE, X0: np.ndarray, solution: np.ndarray):
+    '''
+    Display the error of the gradient descent method at each iteration for functions of different sizes with the
+    following parameters:
+    - `path: str` the path to save the figure
+    - `J: Function` a function object that has the `df` method
+    - `methode: METHODE_TYPE` the method to use
+    - `X0: np.ndarray` the starting point of the method
+    - `solution: np.ndarray` the minimum of the function
+
+    The function saves the figure at the path `path` and print a message to confirm the saving.
+    '''
+    Xn = methode(J, X0, 5e-2, 20_000)
+    
+    err = np.array([np.linalg.norm(J(x) - solution) for x in Xn])
+
+    plt.clf()
+    plt.semilogy(np.arange(len(Xn)), err)
+    plt.xlabel('Nombre d\'itérations $i$')
+    plt.ylabel(r'$\|J(x_i)-x^*\|$')
+    plt.xticks(np.linspace(0, len(Xn)-1, 10, dtype=int))
+    plt.grid()
+    plt.tight_layout()
+    plt.savefig(f'{path}\\error.png', bbox_inches='tight')
+    print(f'File saved at {path}\\error_J_solu.png')
 
 
 def display_phi(path : str ,s : np.ndarray  , alphas : np.ndarray ):
@@ -385,8 +448,10 @@ def display_phi(path : str ,s : np.ndarray  , alphas : np.ndarray ):
     plt.xlabel('s')
     plt.ylabel(r'$\phi(s, \alpha)$')
     plt.legend()
-    plt.savefig(f'{path}\\phi.svg')
-    print(f'File saved at {path}\\phi.svg')
+    plt.tight_layout()
+    plt.savefig(f'{path}\\phi.png', bbox_inches='tight')
+    print(f'File saved at {path}\\phi.png')
+
 
 def estimate_u(img_np, lambda_):
     # res = minimize(X, img_np, args=(img_np, lambda_), method='CG', jac=grad_J, options={'maxiter': niter})

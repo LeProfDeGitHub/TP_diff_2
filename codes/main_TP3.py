@@ -25,9 +25,9 @@ from display import display_phi
 
 
 METHODS: tuple[METHOD_TYPE, ...] = (
-    gradient_descent_fix_step,
-    quadratic_gradient_descent_optimal_step,
-    quadratic_conjuguate_gradient,
+    # gradient_descent_fix_step,
+    # quadratic_gradient_descent_optimal_step,
+    # quadratic_conjuguate_gradient,
     newton,
     newton_optimal_step,
     gradient_descent_optimal_step,
@@ -75,9 +75,10 @@ def test_grad(img):
     gxy_img.show()
 
 def test_div(img):
-    div_img = div(np.array(img))
-    div_img = PIL.Image.fromarray(div_img.astype(np.uint8))
-    div_img.show()
+    # div_img = div(np.array(img))
+    # div_img = PIL.Image.fromarray(div_img.astype(np.uint8))
+    # div_img.show()
+    pass
     
 
 # new_img_np = modify_image(img_np)
@@ -134,11 +135,11 @@ def test_methods(methods: tuple[METHOD_TYPE, ...], img_np: np.ndarray):
     # img_J = PIL.Image.fromarray(img_J_np.astype(np.uint8))
     # img_J.show()
 
-    for method in methods:        
+    for method in methods:
         # Update u
         # us = method(J, u, 1e-2, 1000)
         u_reshape = u.reshape(-1)
-        us = scipy.optimize.minimize(J.f, u_reshape, jac=J.df, method='L-BFGS-B', options={'disp': True})
+        us = scipy.optimize.minimize(J.f, u_reshape, jac=J.df, method='L-BFGS-B')
         u_min = us[-1]
         # u_min = u_min.reshape(u.shape)
 
@@ -194,22 +195,23 @@ def main():
     # test_div_grad()
     # test_plot_objective(np.array(img))
     test_methods((
-        # quadratic_conjuguate_gradient,
-        quadratic_gradient_descent_optimal_step,
+        quadratic_conjuguate_gradient,
+        # quadratic_gradient_descent_optimal_step,
         # gradient_descent_fix_step,
     ), img_np)
 
 
 def test_computePhi():
     s = np.linspace(-2, 2, 600) # On pourra changer les valeurs de s pour voir l'effet sur la fonction Phi
-    alphas = np.array( [0.1 ,0.25, 0.5, 1])
-    display_phi( "images", s, alphas)
+    # alphas = np.array( [0.1 ,0.25, 0.5, 1])
+    alphas = np.linspace(0.01, 2, 100)
+    display_phi( "figure", s, alphas)
     plt.show()
 
 
 if __name__ == '__main__':
 
-    test_computePhi()
+    # test_computePhi()
     main()
   
     

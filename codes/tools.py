@@ -71,6 +71,13 @@ class TestFuncsCollection:
             func(self, *args, **kwargs)
         self.funcs.append(wrapper)
         return wrapper
+
+    def run(self):
+        '''
+        Run the functions.
+        '''
+        for func in self.funcs:
+            func()
     
 
 def test_deco_n(test_funcs_collection: TestFuncsCollection, n: int):
