@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def modify_image(image_np):
     """
     Modify the mean and standard deviation of an image
@@ -28,7 +29,8 @@ def grad(image_np) -> tuple[np.ndarray, np.ndarray]:
     gradient_y[:,:-1]=image_np[:,1:]-image_np[:,:-1]
     gradient_y[:,-1]=0
 
-    return gradient_x,gradient_y
+    return gradient_x, gradient_y
+
 def grad_norm(u):
     """
     Retourne une image N qui correspond à la norme du gradient de l'image u. 
@@ -74,47 +76,46 @@ def grad_norm(u):
     
 #     return divergence
 
-def div(v: np.ndarray) -> np.ndarray:
+def div(v1: np.ndarray, v2: np.ndarray) -> np.ndarray:
     """
     Calcule la divergence d'un champ de vecteurs v = (v1, v2) de dimension (m, n).
     - `v` est un array numpy de dimension (m, n)
 
     """
-    m, n = v.shape
-    divv = np.zeros((m, n))
+    m, n = v1.shape
 
-    # Calcul de la divergence selon les définitions données
-    divv[1:-1, :] = v[1:-1, :] - v[:-2, :]
-    divv[:, 1:-1] += v[:, 1:-1] - v[:, :-2]
-    divv[0, :] += v[0, :]
-    divv[:, 0] += v[:, 0]
-    divv[-1, :] -= v[-2, :]
-    divv[:, -1] -= v[:, -2]
+    div_omega = np.zeros((m, n))
 
-    return divv
-def test_div_grad(u,v):
+    div_omega[:-1, :] += v1[:-1, :]
+    div_omega[1:, :] -= v1[:-1, :]
+
+    div_omega[:, :-1] += v2[:, :-1]
+    div_omega[:, 1:] -= v2[:, :-1]
+
+    return div_omega
+
+
+def test_div_grad():
     """
-    Test la divergence et le gradient du vecteur u et v
+    Test la divergence et le gradient de deux vecteurs u et v
     avec la relation <grad(u),v> = -<u,div(v)>
-    :param u: vecteur u
-    :param v: vecteur v
     :return: booléen
     """
 
-    div_v=div(v)
-    grad_u=grad(u)
+    u = np.random.rand(10, 10)
+    omega_x = np.random.rand(10, 10)
+    omega_y = np.random.rand(10, 10)
 
-    print("div(v):",div_v)
-    print("grad(u):",grad_u)
+    grad_u_x, grad_u_y = grad(u)
+    div_omega = div(omega_x, omega_y)
 
-    u_div_v=np.sum(u*div_v)
-    grad_u_v=np.sum(grad_u*v)
-    test=np.allclose(grad_u_v,-u_div_v)
+    inner_product_grad = np.sum(grad_u_x * omega_x + grad_u_y * omega_y)
+    inner_product_div = np.sum(u * div_omega)
 
-    print("grad(u) * v:",grad_u_v)
-    print("u * div(v):",u_div_v)
-    print("Test passed:",test)
-    return test
+    print("grad(u) * v:", inner_product_grad)
+    print("u * div(v):", inner_product_div)
+    print("Test passed:", np.abs(inner_product_grad + inner_product_div) < 1e-10)
+
 
 
 def add_noise(image_np, sigma):

@@ -2,6 +2,7 @@ import PIL.Image
 import numpy as np 
 import PIL
 import matplotlib.pyplot as plt
+import scipy
 
 from function import Function
 from image_methods import (modify_image,
@@ -16,7 +17,9 @@ from opti_methods import (METHOD_TYPE,
                           quadratic_conjuguate_gradient,
                           newton,
                           newton_optimal_step,
-                          gradient_descent_optimal_step)
+                          gradient_descent_optimal_step,
+                          quasi_newton_BFGS,
+                          quasi_newton_DFP,)
 from display import display_phi
 
 
@@ -96,26 +99,30 @@ def test_noise(img_np):
 
 def get_J_image_func(v, lmbd: float):
     def f(u):
+        u = u.reshape(v.shape)
         return (1/2) * np.linalg.norm(v - u)**2 + (lmbd/2) * grad_norm(u)**2
     
     def df(u):
-        
-        return u - v - lmbd * div(grad(u))
+        u = u.reshape(v.shape)
+        return u - v - lmbd * div(*grad(u))
 
     def ddf(u):
-        return np.eye(u.shape[0]) + lmbd * div(grad(u))
+        u = u.reshape(v.shape)
+        return np.eye(u.shape[0]) + lmbd * div(*grad(u))
     
     return Function(f, df, ddf)
 
 def test_methods(methods: tuple[METHOD_TYPE, ...], img_np: np.ndarray):
     
     # Define the parameters
-    eps = 1e-6
+    # eps = 1e-6
     niter = 100
     lmbd = 0.1
 
     # Initialize u
     u = add_noise(img_np, 10)
+    img_u = PIL.Image.fromarray(u.astype(np.uint8))
+    img_u.show()
     
     # Get the J function
     J = get_J_image_func(img_np, lmbd)
@@ -129,11 +136,17 @@ def test_methods(methods: tuple[METHOD_TYPE, ...], img_np: np.ndarray):
 
     for method in methods:        
         # Update u
-        us = method(J, u, eps, 1000)
+        # us = method(J, u, 1e-2, 1000)
+        u_reshape = u.reshape(-1)
+        us = scipy.optimize.minimize(J.f, u_reshape, jac=J.df, method='L-BFGS-B', options={'disp': True})
         u_min = us[-1]
+        # u_min = u_min.reshape(u.shape)
 
         img = PIL.Image.fromarray(u_min.astype(np.uint8))
-        img.save(f"figure/{METHODS_LABEL_PATH[method][1]}.png")
+        img.show()
+        img_u.save(f"figure/{METHODS_LABEL_PATH[method][1]}/image_u.png")
+        img.save(f"figure/{METHODS_LABEL_PATH[method][1]}/image.png")
+        print(f"File saved as figure/{METHODS_LABEL_PATH[method][1]}/image.png")
 
     
 # def test_plot_objective(img):
@@ -173,14 +186,18 @@ def main():
     
     path = 'Images'
     img = PIL.Image.open(f"{path}/lena.png")
+    img = img.resize((100,100))
     img_np = np.array(img)
     # test_hist(img)
     # test_div(img)
-    u=np.array([[1,2,3],[4,5,6],[7,8,9]],dtype=np.float32)
-    v=np.array([[1,0,-1],[1,0,-1],[1,0,-1]],dtype=np.float32)
-    test_div_grad(u, v)
+
+    # test_div_grad()
     # test_plot_objective(np.array(img))
-    test_methods((quadratic_conjuguate_gradient,), img_np)
+    test_methods((
+        # quadratic_conjuguate_gradient,
+        quadratic_gradient_descent_optimal_step,
+        # gradient_descent_fix_step,
+    ), img_np)
 
 
 def test_computePhi():
