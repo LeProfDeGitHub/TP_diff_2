@@ -19,8 +19,12 @@ from opti_methods import (METHOD_TYPE,
                           newton_optimal_step,
                           gradient_descent_optimal_step,
                           quasi_newton_BFGS,
-                          quasi_newton_DFP,)
-from display import display_phi
+                          quasi_newton_DFP,
+                          BFGS_J,
+                          DFP_J)
+
+
+from display import display_phi, display_error_gradient_j, display_quadratic_error
 
 
 
@@ -190,7 +194,22 @@ def main():
     img_np = np.array(img)
     # test_hist(img)
     # test_div(img)
+    path='Images'
+    img=PIL.Image.open(f"{path}/lena.png")
+    img=img.resize((75,75))
+    img_np=np.array(img,dtype=np.float32)
+    new_img_np=add_noise(img_np,10)
+    new_img=PIL.Image.fromarray(new_img_np.astype(np.uint8))
+    new_img.show()
+    u=BFGS_J(new_img_np,new_img_np,100,4,0.1)
+    u_img=PIL.Image.fromarray(u.astype(np.uint8))
+    u_img.show()
 
+    # test_hist(img)
+    # test_div(img)
+    display_error_gradient_j("Images/lena.png",4)
+    display_quadratic_error("Images/lena.png")
+    # test_plot_objective(np.array(img))
     # test_div_grad()
     # test_plot_objective(np.array(img))
     test_methods((
@@ -209,7 +228,7 @@ def test_computePhi():
 
 if __name__ == '__main__':
 
-    test_computePhi()
+
     main()
   
     

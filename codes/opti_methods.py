@@ -198,7 +198,7 @@ def gradien_pas_fixe_J(v, u0, nb_iter, pas, lambda_, alpha):
 
 
 
-def dfp_J(v, u0, nb_iter, lambda_, alpha, eps=1e-3):
+def DFP_J(v, u0, nb_iter, lambda_, alpha, eps=1e-3):
     u = u0.copy()
     m, n = u.shape
     N = m * n
