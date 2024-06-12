@@ -201,14 +201,15 @@ def main():
 
 
 def test_computePhi():
-    s = np.linspace(-2, 2, 400) # On pourra changer les valeurs de s pour voir l'effet sur la fonction Phi
-    alphas = np.linspace(0.01, 2, 100)
-    display_phi('figure', s, alphas)
+    s = np.linspace(-2, 2, 600) # On pourra changer les valeurs de s pour voir l'effet sur la fonction Phi
+    alphas = np.array( [0.1 ,0.25, 0.5, 1])
+    display_phi( "images", s, alphas)
     plt.show()
 
 
 if __name__ == '__main__':
-    # test_computePhi()
+
+    test_computePhi()
     main()
   
     
