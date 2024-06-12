@@ -16,8 +16,10 @@ from opti_methods import (METHOD_TYPE,
                           quadratic_conjuguate_gradient,
                           newton,
                           newton_optimal_step,
-                          gradient_descent_optimal_step)
-from display import display_phi
+                          gradient_descent_optimal_step,
+                          dfp_J,
+                          BFGS_J)
+from display import display_phi,display_quadratic_error, display_error_gradient_j
 
 
 
@@ -166,22 +168,6 @@ def test_methods(methods: tuple[METHOD_TYPE, ...], img_np: np.ndarray):
 #     plt.ylabel('J(u)')
 #     plt.title('Evolution of the objective function J(u)')
 #     plt.show()
-
-
-
-def main():
-    
-    path = 'Images'
-    img = PIL.Image.open(f"{path}/lena.png")
-    img_np = np.array(img)
-    # test_hist(img)
-    # test_div(img)
-    u=np.array([[1,2,3],[4,5,6],[7,8,9]],dtype=np.float32)
-    v=np.array([[1,0,-1],[1,0,-1],[1,0,-1]],dtype=np.float32)
-    test_div_grad(u, v)
-    # test_plot_objective(np.array(img))
-
-
 def test_computePhi():
     s = np.linspace(-2, 2, 600) # On pourra changer les valeurs de s pour voir l'effet sur la fonction Phi
     alphas = np.array( [0.1 ,0.25, 0.5, 1])
@@ -189,9 +175,31 @@ def test_computePhi():
     plt.show()
 
 
+
+def main():
+    
+    path = 'Images'
+    img = PIL.Image.open(f"{path}/lena.png")
+    img = img.resize((75,75))
+    img_np = np.array(img, dtype=np.float32)
+    new_img_np = add_noise(img_np, 10)
+    new_img = PIL.Image.fromarray(new_img_np.astype(np.uint8))
+    new_img.show()
+    u= BFGS_J(new_img_np, new_img_np, 100, 4, 0.1)
+    u_img = PIL.Image.fromarray(u.astype(np.uint8))
+    u_img.show()
+
+    # test_hist(img)
+    # test_div(img)
+    display_error_gradient_j("Images/lena.png", 4)
+    display_quadratic_error("Images/lena.png")
+    # test_plot_objective(np.array(img))
+
+
+
+
 if __name__ == '__main__':
 
-    test_computePhi()
     main()
   
     

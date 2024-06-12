@@ -1,18 +1,18 @@
 from typing import Callable, Literal
 import numpy as np
-
+import PIL
 from matplotlib import cm
 from matplotlib import pyplot as plt
 from matplotlib import contour as ctr
 from matplotlib.colors import Normalize, LogNorm
-
+from image_methods import (add_noise)
 from tools import time_func
 from function import (Function,
                       get_other_diago,
                       condi_A,
                       computePhi,
                       computeAbsPhi)
-from opti_methods import METHOD_TYPE
+from opti_methods import METHOD_TYPE, gradien_pas_fixe_J
 
 
 def plot_contour(f: Function, x_space: np.ndarray, y_space: np.ndarray, z_space: np.ndarray | None = None, norm = None):
@@ -413,3 +413,44 @@ def display_error_lambda(img_np, estimate_u):
     plt.title('MSE between original and estimated image vs lambda')
     plt.show()
 
+def display_quadratic_error(path : str):
+    img = PIL.Image.open(path)
+    img_np = np.array(img)
+    new_img_np = img_np
+    lmbd = np.linspace(0.1, 10, 20)
+    error1 = []
+    error2=  []
+    for i in lmbd:
+        u = gradien_pas_fixe_J(new_img_np, new_img_np, 100, 0.001, i, 0.01)
+        error1.append(np.linalg.norm(u - img_np))
+    for i in lmbd:
+        u = gradien_pas_fixe_J(new_img_np, new_img_np, 100, 0.001, i, 0.1)
+        error2.append(np.linalg.norm(u - img_np))
+    plt.clf()
+    plt.figure(1)
+    plt.plot(lmbd, error1)
+    plt.xlabel('Lambda')
+    plt.ylabel('Error')
+    plt.title('Error as a function of lambda with alpha = 0.01')
+    plt.figure(2)
+    plt.plot(lmbd, error2)
+    plt.xlabel('Lambda')
+    plt.ylabel('Error')
+    plt.title('Error as a function of lambda with alpha = 0.1')
+    plt.show()
+
+def display_error_gradient_j(path, lmbd):
+    img=PIL.Image.open(path)
+    img_np=np.array(img)
+    new_img_np=add_noise(img_np,10)
+    errors = []
+    nb_iter = [i for i in range(0, 150, 50)]
+    for i in nb_iter:
+        u = gradien_pas_fixe_J(new_img_np, new_img_np, i, 0.01, lmbd, 0.01)
+        error = np.linalg.norm((img_np - u))
+        errors.append(error)
+    plt.plot(nb_iter, errors)
+    plt.xlabel('Number of iterations')
+    plt.ylabel('Error')
+    plt.title('Error between original and estimated image vs number of iterations')
+    plt.show()
